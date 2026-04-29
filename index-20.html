@@ -1,0 +1,2662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hisia — Your Period, Your Power</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #FF80AB;
+    --pink-dark: #F06292;
+    --pink-light: #FFD6E7;
+    --lavender: #CE93D8;
+    --lavender-light: #F3E5F5;
+    --mint: #B2EBF2;
+    --mint-dark: #80DEEA;
+    --yellow: #FFF9C4;
+    --yellow-dark: #FFF176;
+    --white: #FFFFFF;
+    --bg: #FFF5F9;
+    --text: #2D2D2D;
+    --text-light: #777;
+    --card: #FFFFFF;
+    --radius: 20px;
+    --radius-sm: 12px;
+    --shadow: 0 4px 20px rgba(255,128,171,0.15);
+    --shadow-lg: 0 8px 32px rgba(255,128,171,0.25);
+    --error: #E53935;
+    --error-bg: #FFEBEE;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ===== ONBOARDING ===== */
+  #onboarding {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, #FF80AB 0%, #CE93D8 50%, #B2EBF2 100%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 32px 24px 40px;
+    text-align: center;
+    overflow-y: auto;
+  }
+
+  .ob-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
+    font-weight: 900;
+    color: white;
+    letter-spacing: -2px;
+    margin-bottom: 4px;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+  .ob-tagline {
+    color: rgba(255,255,255,0.9);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+  }
+  .ob-card {
+    background: white;
+    border-radius: 28px;
+    padding: 28px 24px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .ob-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .ob-card > p {
+    color: var(--text-light);
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  .ob-field { margin-bottom: 14px; text-align: left; }
+  .ob-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--pink-dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .ob-field input, .ob-field select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--pink-light);
+    border-radius: var(--radius-sm);
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .ob-field input:focus, .ob-field select:focus { border-color: var(--pink); }
+  .ob-field input.error, .ob-field select.error { border-color: var(--error); background: var(--error-bg); }
+  .ob-field .field-error {
+    display: none;
+    font-size: 11px;
+    color: var(--error);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .ob-field .field-error.show { display: block; }
+
+  .ob-section-divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 16px 0 14px;
+  }
+  .ob-section-divider span {
+    font-size: 11px; font-weight: 800; color: var(--pink-dark);
+    text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;
+  }
+  .ob-section-divider::before, .ob-section-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--pink-light);
+  }
+
+  .cycle-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+  .cycle-type-opt {
+    padding: 14px 10px;
+    border: 2px solid var(--pink-light);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg);
+  }
+  .cycle-type-opt.selected { border-color: var(--pink); background: var(--pink-light); }
+  .cycle-type-opt .cto-icon { font-size: 24px; display: block; margin-bottom: 4px; }
+  .cycle-type-opt .cto-label { font-size: 13px; font-weight: 800; }
+  .cycle-type-opt .cto-sub { font-size: 10px; color: var(--text-light); margin-top: 2px; }
+
+  .ob-conditional { display: none; }
+  .ob-conditional.show { display: block; }
+
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--pink), var(--lavender));
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 20px rgba(255,128,171,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,128,171,0.5); }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ===== APP SHELL ===== */
+  #app { display: none; flex-direction: column; min-height: 100vh; }
+  #app.visible { display: flex; }
+
+  .topbar {
+    background: white;
+    padding: 16px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(255,128,171,0.1);
+  }
+  .topbar-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--pink), var(--lavender));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .topbar-greeting { font-size: 12px; color: var(--text-light); font-weight: 600; }
+  .topbar-avatar {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--pink), var(--lavender));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800; font-size: 14px;
+  }
+
+  .screen { display: none; flex: 1; padding: 20px 16px 100px; animation: fadeUp 0.3s ease; }
+  .screen.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%; max-width: 430px;
+    background: white;
+    display: flex;
+    border-top: 1px solid var(--pink-light);
+    box-shadow: 0 -4px 20px rgba(255,128,171,0.12);
+    z-index: 100;
+  }
+  .nav-item {
+    flex: 1;
+    padding: 10px 4px 12px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+    cursor: pointer; transition: all 0.2s;
+    border: none; background: none;
+  }
+  .nav-icon { font-size: 22px; transition: transform 0.2s; }
+  .nav-label { font-size: 9px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+  .nav-item.active .nav-icon { transform: scale(1.2); }
+  .nav-item.active .nav-label { color: var(--pink-dark); }
+  .nav-item:hover .nav-icon { transform: scale(1.1); }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 700; margin-bottom: 4px;
+  }
+  .card-sub { font-size: 12px; color: var(--text-light); margin-bottom: 16px; }
+
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
+  .badge { background: var(--pink-light); color: var(--pink-dark); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+
+  /* ===== TRACKER ===== */
+  .cycle-hero {
+    background: linear-gradient(135deg, #FF80AB, #CE93D8);
+    border-radius: var(--radius);
+    padding: 24px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .cycle-hero::before {
+    content: '🌸'; position: absolute;
+    right: -10px; top: -10px;
+    font-size: 100px; opacity: 0.2;
+  }
+  .cycle-hero h2 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; }
+  .cycle-hero p { font-size: 13px; opacity: 0.9; margin-top: 4px; }
+  .cycle-countdown {
+    margin-top: 20px;
+    background: rgba(255,255,255,0.2);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .countdown-days { font-size: 42px; font-weight: 900; line-height: 1; }
+  .countdown-label { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+
+  /* CALENDAR */
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 12px; }
+  .cal-day-name { text-align: center; font-size: 10px; font-weight: 700; color: var(--text-light); padding: 4px 0; }
+  .cal-day {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    position: relative;
+  }
+  .cal-day:hover { transform: scale(1.1); }
+  .cal-day.period { background: var(--pink); color: white; }
+  .cal-day.ovulation { background: var(--lavender); color: white; }
+  .cal-day.fertile { background: var(--mint); color: var(--text); }
+  .cal-day.period-approx { background: var(--pink-light); color: var(--pink-dark); border: 2px dashed var(--pink); }
+  .cal-day.fertile-approx { background: #E0F7FA; color: #006064; border: 1px dashed var(--mint-dark); }
+  .cal-day.today { box-shadow: 0 0 0 2px var(--pink-dark); font-weight: 800; }
+  .cal-day.empty { opacity: 0; pointer-events: none; }
+  .cal-legend { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-light); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* SYMPTOMS */
+  .symptoms-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .symptom-chip {
+    padding: 10px 6px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--pink-light);
+    background: white; text-align: center;
+    font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .symptom-chip .sym-icon { font-size: 20px; }
+  .symptom-chip.selected { background: var(--pink-light); border-color: var(--pink); color: var(--pink-dark); }
+  .symptom-chip:hover { border-color: var(--pink); transform: scale(1.03); }
+
+  /* INSIGHTS */
+  .insights-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .insight-card { padding: 16px; border-radius: var(--radius-sm); text-align: center; }
+  .insight-card.pink { background: var(--pink-light); }
+  .insight-card.lavender { background: var(--lavender-light); }
+  .insight-card.mint { background: var(--mint); }
+  .insight-card.yellow { background: var(--yellow); }
+  .insight-value { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; }
+  .insight-label { font-size: 11px; color: var(--text-light); font-weight: 600; margin-top: 2px; }
+
+  /* ===== SHOP ===== */
+  .featured-brand {
+    background: linear-gradient(135deg, var(--yellow), var(--mint));
+    border-radius: var(--radius);
+    padding: 18px; margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand-badge { font-size: 10px; font-weight: 800; background: var(--pink); color: white; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; }
+  .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .product-card {
+    background: white; border-radius: var(--radius);
+    padding: 16px; box-shadow: var(--shadow);
+    cursor: pointer; transition: all 0.2s;
+    border: 2px solid transparent;
+  }
+  .product-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--pink-light); }
+  .product-card.in-cart { border-color: var(--pink); background: var(--pink-light); }
+  .product-emoji { font-size: 36px; margin-bottom: 8px; }
+  .product-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .product-brand { font-size: 11px; color: var(--text-light); }
+  .product-price { font-size: 16px; font-weight: 800; color: var(--pink-dark); margin-top: 8px; }
+  .product-add {
+    width: 28px; height: 28px;
+    background: var(--pink); color: white;
+    border: none; border-radius: 50%;
+    font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    float: right; margin-top: -28px;
+    transition: transform 0.2s;
+  }
+  .product-add:hover { transform: scale(1.15); }
+  .cart-summary {
+    position: fixed;
+    bottom: 70px; left: 50%; transform: translateX(-50%);
+    width: calc(100% - 32px); max-width: 398px;
+    background: linear-gradient(135deg, var(--pink), var(--lavender));
+    color: white; padding: 14px 20px;
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 8px 32px rgba(255,128,171,0.4);
+    cursor: pointer; z-index: 50; transition: all 0.3s;
+  }
+  .cart-summary.hidden { opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(20px); }
+  .cart-count { font-size: 13px; font-weight: 700; }
+  .cart-total { font-size: 18px; font-weight: 800; }
+
+  /* DELIVERY MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 500;
+    display: flex; align-items: flex-end;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: white;
+    border-radius: 28px 28px 0 0;
+    padding: 28px 24px 40px;
+    width: 100%;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-handle { width: 40px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 24px; }
+  .modal h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 16px; }
+  .order-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--pink-light); }
+  .order-item:last-child { border: none; }
+  .order-item-name { font-size: 14px; font-weight: 700; }
+  .order-item-price { font-size: 14px; color: var(--pink-dark); font-weight: 700; }
+  .delivery-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
+  .delivery-opt {
+    padding: 12px; border: 2px solid var(--pink-light);
+    border-radius: var(--radius-sm); text-align: center;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .delivery-opt.selected { border-color: var(--pink); background: var(--pink-light); }
+  .delivery-opt-title { font-size: 13px; font-weight: 700; }
+  .delivery-opt-sub { font-size: 11px; color: var(--text-light); }
+  .discreet-tag {
+    background: var(--mint); border-radius: var(--radius-sm);
+    padding: 10px 14px; font-size: 12px; font-weight: 700;
+    color: #006064; display: flex; align-items: center; gap: 8px; margin: 12px 0;
+  }
+
+  /* ===== IS THIS NORMAL ===== */
+  .itn-intro {
+    background: linear-gradient(135deg, var(--lavender-light), var(--pink-light));
+    border-radius: var(--radius); padding: 20px; margin-bottom: 16px; text-align: center;
+  }
+  .itn-intro .emoji { font-size: 48px; margin-bottom: 8px; }
+  .symptom-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .symptom-select-item {
+    padding: 14px 12px; border: 2px solid var(--lavender-light);
+    border-radius: var(--radius-sm); cursor: pointer;
+    transition: all 0.2s; display: flex; align-items: center; gap: 10px;
+  }
+  .symptom-select-item:hover { border-color: var(--lavender); }
+  .symptom-select-item.selected { border-color: var(--lavender); background: var(--lavender-light); }
+  .symptom-select-item .si-icon { font-size: 22px; }
+  .symptom-select-item .si-text { font-size: 12px; font-weight: 700; }
+  .symptom-select-item .si-sw { font-size: 10px; color: var(--text-light); }
+  .result-card { border-radius: var(--radius); padding: 20px; margin-top: 16px; animation: fadeUp 0.3s ease; }
+  .result-card.normal { background: linear-gradient(135deg, #E8F5E9, #B2EBF2); }
+  .result-card.monitor { background: linear-gradient(135deg, var(--yellow), #FFE082); }
+  .result-card.doctor { background: linear-gradient(135deg, #FCE4EC, var(--lavender-light)); }
+  .result-status { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  .result-desc { font-size: 13px; line-height: 1.6; color: var(--text); }
+  .result-condition { font-size: 12px; font-weight: 700; color: var(--pink-dark); margin-top: 10px; }
+
+  /* ===== MY RECORDS ===== */
+  .rights-card {
+    background: linear-gradient(135deg, var(--pink-light), var(--lavender-light));
+    border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+  }
+  .rights-card h3 { font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 12px; }
+  .right-item { background: white; border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 8px; font-size: 12px; line-height: 1.5; }
+  .right-item strong { color: var(--pink-dark); font-size: 13px; display: block; margin-bottom: 4px; }
+  .log-form { display: flex; flex-direction: column; gap: 12px; }
+  .log-form input, .log-form select, .log-form textarea {
+    width: 100%; padding: 12px 14px;
+    border: 2px solid var(--pink-light); border-radius: var(--radius-sm);
+    font-family: 'Nunito', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.2s; background: white;
+  }
+  .log-form input:focus, .log-form select:focus, .log-form textarea:focus { border-color: var(--pink); }
+  .log-entry { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--pink-light); }
+  .log-entry:last-child { border: none; }
+  .log-date { font-size: 12px; color: var(--text-light); }
+  .log-type { font-size: 13px; font-weight: 700; }
+  .log-pill { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+  .log-pill.work { background: var(--lavender-light); color: #6A1B9A; }
+  .log-pill.school { background: var(--mint); color: #006064; }
+  .log-pill.both { background: var(--pink-light); color: var(--pink-dark); }
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .stat-box { padding: 14px 10px; border-radius: var(--radius-sm); text-align: center; }
+  .stat-box.pink { background: var(--pink-light); }
+  .stat-box.lav { background: var(--lavender-light); }
+  .stat-box.mint { background: var(--mint); }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; }
+  .stat-label { font-size: 10px; color: var(--text-light); font-weight: 700; text-transform: uppercase; }
+
+  .empty-state {
+    text-align: center; padding: 32px 16px; color: var(--text-light);
+  }
+  .empty-state .es-icon { font-size: 40px; margin-bottom: 10px; }
+  .empty-state p { font-size: 13px; font-weight: 600; }
+
+  /* ===== FIND CARE ===== */
+  .symptom-search {
+    width: 100%; padding: 14px 18px;
+    border: 2px solid var(--pink-light); border-radius: 50px;
+    font-family: 'Nunito', sans-serif; font-size: 14px;
+    outline: none; background: white; margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .symptom-search:focus { border-color: var(--pink); }
+  .filter-chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; }
+  .filter-chip {
+    flex-shrink: 0; padding: 6px 14px;
+    border: 2px solid var(--pink-light); border-radius: 20px;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+    transition: all 0.2s; white-space: nowrap; background: white;
+  }
+  .filter-chip.active { background: var(--pink); color: white; border-color: var(--pink); }
+  .clinic-card {
+    background: white; border-radius: var(--radius); padding: 18px;
+    margin-bottom: 12px; box-shadow: var(--shadow);
+    display: flex; gap: 14px; transition: transform 0.2s; cursor: pointer;
+  }
+  .clinic-card:hover { transform: translateY(-2px); }
+  .clinic-avatar { width: 52px; height: 52px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+  .clinic-avatar.pink { background: var(--pink-light); }
+  .clinic-avatar.lav { background: var(--lavender-light); }
+  .clinic-avatar.mint { background: var(--mint); }
+  .clinic-name { font-size: 15px; font-weight: 800; }
+  .clinic-area { font-size: 12px; color: var(--text-light); margin-bottom: 6px; }
+  .clinic-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .clinic-tag { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
+  .tag-nhif { background: var(--mint); color: #006064; }
+  .tag-female { background: var(--pink-light); color: var(--pink-dark); }
+  .tag-cost { background: var(--yellow); color: #F57F17; }
+  .clinic-book {
+    width: 100%; padding: 10px;
+    background: linear-gradient(135deg, var(--pink), var(--lavender));
+    color: white; border: none; border-radius: var(--radius-sm);
+    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700;
+    cursor: pointer; margin-top: 10px; transition: all 0.2s;
+  }
+  .clinic-book:hover { opacity: 0.9; transform: scale(1.02); }
+
+  /* BUTTONS */
+  .btn-outline {
+    padding: 12px 20px;
+    border: 2px solid var(--pink); background: transparent;
+    color: var(--pink-dark); border-radius: var(--radius-sm);
+    font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; width: 100%;
+  }
+  .btn-outline:hover { background: var(--pink-light); }
+  .btn-sm {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, var(--pink), var(--lavender));
+    color: white; border: none; border-radius: 20px;
+    font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-sm:hover { opacity: 0.9; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; top: 80px; left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: var(--text); color: white;
+    padding: 12px 24px; border-radius: 50px;
+    font-size: 13px; font-weight: 700;
+    z-index: 2000; opacity: 0; transition: all 0.3s;
+    white-space: nowrap; max-width: 90vw; text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { background: #2E7D32; }
+  .toast.warning { background: #E65100; }
+
+  /* IRREGULAR RANGE BANNER */
+  .irregular-banner {
+    background: linear-gradient(135deg, var(--yellow), #FFE082);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px; font-size: 12px;
+    font-weight: 700; color: #6D4C41;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  /* ===== YEAR VIEW ===== */
+  .year-view-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .year-view-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700;
+  }
+  .year-tabs {
+    display: flex; gap: 6px;
+  }
+  .year-tab {
+    padding: 5px 12px;
+    border: 2px solid var(--pink-light);
+    border-radius: 20px;
+    font-size: 11px; font-weight: 800;
+    cursor: pointer; transition: all 0.2s;
+    background: white; color: var(--text-light);
+  }
+  .year-tab.active { background: var(--pink); color: white; border-color: var(--pink); }
+
+  .year-scroll {
+    overflow-x: auto;
+    padding-bottom: 4px;
+    display: flex;
+    gap: 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .year-scroll::-webkit-scrollbar { display: none; }
+
+  .mini-month {
+    flex-shrink: 0;
+    width: 220px;
+    background: white;
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: var(--shadow);
+    scroll-snap-align: start;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .mini-month.is-current { border-color: var(--pink); }
+
+  .mini-month-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px; font-weight: 700;
+    margin-bottom: 8px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .mini-month-badge {
+    font-size: 9px; font-weight: 800;
+    background: var(--pink-light); color: var(--pink-dark);
+    padding: 2px 6px; border-radius: 10px;
+  }
+  .mini-month-badge.fertile { background: var(--mint); color: #006064; }
+  .mini-month-badge.current { background: var(--pink); color: white; }
+
+  .mini-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .mini-day-name {
+    text-align: center; font-size: 8px;
+    font-weight: 700; color: var(--text-light);
+    padding: 2px 0;
+  }
+  .mini-day {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 600;
+    position: relative;
+  }
+  .mini-day.period       { background: var(--pink); color: white; }
+  .mini-day.ovulation    { background: var(--lavender); color: white; }
+  .mini-day.fertile      { background: var(--mint); color: var(--text); }
+  .mini-day.period-approx  { background: var(--pink-light); color: var(--pink-dark); }
+  .mini-day.fertile-approx { background: #E0F7FA; color: #006064; }
+  .mini-day.today        { box-shadow: 0 0 0 2px var(--pink-dark); font-weight: 900; }
+  .mini-day.empty        { opacity: 0; pointer-events: none; }
+  .mini-day.past         { opacity: 0.35; }
+
+  .mini-month-summary {
+    margin-top: 10px;
+    display: flex; flex-wrap: wrap; gap: 4px;
+  }
+  .mini-event-chip {
+    font-size: 9px; font-weight: 700;
+    padding: 2px 7px; border-radius: 10px;
+    white-space: nowrap;
+  }
+  .mini-event-chip.period   { background: var(--pink-light); color: var(--pink-dark); }
+  .mini-event-chip.ovulation{ background: var(--lavender-light); color: #6A1B9A; }
+  .mini-event-chip.fertile  { background: var(--mint); color: #006064; }
+  .mini-event-chip.approx   { background: var(--yellow); color: #6D4C41; }
+
+  .year-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .year-nav-btn {
+    background: var(--pink-light); border: none;
+    border-radius: 50%; width: 32px; height: 32px;
+    font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; color: var(--pink-dark); font-weight: 700;
+  }
+  .year-nav-btn:hover { background: var(--pink); color: white; }
+  .year-nav-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 700;
+  }
+
+  .year-timeline {
+    display: none;
+  }
+  .year-timeline.show { display: block; }
+  .timeline-row {
+    display: flex; align-items: flex-start;
+    gap: 12px; padding: 10px 0;
+    border-bottom: 1px solid var(--pink-light);
+  }
+  .timeline-row:last-child { border: none; }
+  .timeline-month-label {
+    width: 44px; flex-shrink: 0;
+    font-size: 11px; font-weight: 800;
+    color: var(--pink-dark);
+    padding-top: 2px;
+  }
+  .timeline-bars { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .timeline-bar-row { display: flex; align-items: center; gap: 6px; }
+  .timeline-bar-label { font-size: 9px; font-weight: 700; color: var(--text-light); width: 46px; flex-shrink: 0; }
+  .timeline-bar-track {
+    flex: 1; height: 10px;
+    background: var(--bg); border-radius: 5px;
+    position: relative; overflow: hidden;
+  }
+  .timeline-bar-fill {
+    position: absolute; top: 0; height: 100%;
+    border-radius: 5px;
+    min-width: 4px;
+  }
+  .timeline-bar-fill.period   { background: var(--pink); }
+  .timeline-bar-fill.fertile  { background: var(--mint); }
+  .timeline-bar-fill.ovulation{ background: var(--lavender); }
+
+  /* ===== MOCK / COMING SOON ===== */
+  .dev-disclaimer {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: linear-gradient(135deg, #FFF8E1, #FFF3E0);
+    border: 1.5px solid #FFE082;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: #5D4037;
+    line-height: 1.5;
+  }
+  .dev-disclaimer .disc-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .dev-disclaimer strong { display: block; font-size: 12px; font-weight: 800; color: #E65100; margin-bottom: 2px; }
+
+  /* Coming-soon overlay modal */
+  .cs-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 900;
+    display: flex; align-items: flex-end;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .cs-overlay.open { opacity: 1; pointer-events: all; }
+  .cs-sheet {
+    background: white;
+    border-radius: 28px 28px 0 0;
+    padding: 0 0 40px;
+    width: 100%;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(.32,.72,0,1);
+    overflow: hidden;
+  }
+  .cs-overlay.open .cs-sheet { transform: translateY(0); }
+
+  .cs-hero {
+    background: linear-gradient(135deg, #FF80AB, #CE93D8);
+    padding: 32px 24px 28px;
+    text-align: center;
+    position: relative;
+  }
+  .cs-hero::after {
+    content: '';
+    position: absolute; bottom: -1px; left: 0; right: 0;
+    height: 20px;
+    background: white;
+    border-radius: 20px 20px 0 0;
+  }
+  .cs-emoji { font-size: 52px; display: block; margin-bottom: 10px; }
+  .cs-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px; font-weight: 900;
+    color: white; margin-bottom: 6px;
+  }
+  .cs-sub { font-size: 13px; color: rgba(255,255,255,0.9); line-height: 1.5; }
+
+  .cs-body { padding: 20px 24px 0; }
+  .cs-message {
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 16px;
+    border-left: 4px solid var(--pink);
+  }
+  .cs-steps { margin-bottom: 20px; }
+  .cs-step {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--pink-light);
+    font-size: 13px; font-weight: 600;
+  }
+  .cs-step:last-child { border: none; }
+  .cs-step-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink), var(--lavender));
+    color: white; font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .cs-notify-row {
+    display: flex; gap: 10px; margin-bottom: 12px;
+  }
+  .cs-notify-input {
+    flex: 1; padding: 12px 14px;
+    border: 2px solid var(--pink-light); border-radius: var(--radius-sm);
+    font-family: 'Nunito', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .cs-notify-input:focus { border-color: var(--pink); }
+  .cs-notify-btn {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, var(--pink), var(--lavender));
+    color: white; border: none; border-radius: var(--radius-sm);
+    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800;
+    cursor: pointer; white-space: nowrap; transition: opacity 0.2s;
+  }
+  .cs-notify-btn:hover { opacity: 0.88; }
+
+  /* Mock success screen (inside delivery modal flow) */
+  .mock-success {
+    text-align: center; padding: 8px 0 8px;
+    animation: fadeUp 0.4s ease;
+  }
+  .mock-success-icon { font-size: 56px; margin-bottom: 12px; }
+  .mock-success-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700; margin-bottom: 8px;
+  }
+  .mock-success-msg { font-size: 13px; color: var(--text-light); line-height: 1.6; margin-bottom: 20px; }
+  .mock-success-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--mint); color: #006064;
+    font-size: 11px; font-weight: 800;
+    padding: 6px 14px; border-radius: 20px; margin-bottom: 20px;
+  }
+
+  ::-webkit-scrollbar { width: 0; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div class="ob-logo">Hisia</div>
+  <div class="ob-tagline">Your Period. Your Power.</div>
+  <div class="ob-card">
+    <!-- Auth tab switcher -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;">
+      <button id="tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:10px;border:2px solid var(--pink);border-radius:10px;background:var(--pink);color:white;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">New Here 🌸</button>
+      <button id="tab-login" onclick="switchAuthTab('login')" style="flex:1;padding:10px;border:2px solid var(--pink-light);border-radius:10px;background:white;color:var(--pink-dark);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">Sign In 🔑</button>
+    </div>
+
+    <!-- LOGIN SECTION (returning users) -->
+    <div id="ob-login-section" style="display:none;">
+      <h2>Welcome Back! 💕</h2>
+      <p>Sign in to your Hisia account</p>
+      <div class="ob-field" style="margin-top:16px;">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="amina@gmail.com" autocomplete="email" />
+        <div class="field-error" id="err-login-email">Please enter a valid email</div>
+      </div>
+      <button class="btn-primary" onclick="signInUser()" style="margin-top:8px;">Sign In 🔑</button>
+      <p style="text-align:center;margin-top:14px;font-size:12px;color:var(--text-light);">Don't have an account? <span onclick="switchAuthTab('signup')" style="color:var(--pink-dark);font-weight:700;cursor:pointer;">Create one →</span></p>
+    </div>
+
+    <!-- SIGN UP SECTION (new users) -->
+    <div id="ob-signup-section">
+    <h2>Karibu! 🌸</h2>
+    <p>Let's set up your personal period space in seconds</p>
+
+    <div class="ob-field">
+      <label>Your Name</label>
+      <input type="text" id="ob-name" placeholder="e.g. Amina" autocomplete="off" />
+      <div class="field-error" id="err-name">Please enter your name</div>
+    </div>
+
+    <div class="ob-field">
+      <label>Age</label>
+      <input type="number" id="ob-age" placeholder="e.g. 24" min="12" max="55" />
+      <div class="field-error" id="err-age">Please enter a valid age (12–55)</div>
+    </div>
+
+    <div class="ob-field">
+      <label>Your County</label>
+      <select id="ob-county">
+        <option value="Nairobi">Nairobi</option>
+        <option value="Mombasa">Mombasa</option>
+        <option value="Kisumu">Kisumu</option>
+        <option value="Nakuru">Nakuru</option>
+        <option value="Eldoret">Eldoret / Uasin Gishu</option>
+        <option value="Kiambu">Kiambu</option>
+        <option value="Machakos">Machakos</option>
+        <option value="Other">Other County</option>
+      </select>
+    </div>
+
+    <div class="ob-section-divider"><span>Your Cycle</span></div>
+
+    <div class="ob-field">
+      <label>Cycle Type</label>
+      <div class="cycle-type-grid">
+        <div class="cycle-type-opt selected" id="opt-regular" onclick="selectCycleType('regular')">
+          <span class="cto-icon">📅</span>
+          <div class="cto-label">Regular</div>
+          <div class="cto-sub">Comes around same time</div>
+        </div>
+        <div class="cycle-type-opt" id="opt-irregular" onclick="selectCycleType('irregular')">
+          <span class="cto-icon">🔀</span>
+          <div class="cto-label">Irregular</div>
+          <div class="cto-sub">Varies month to month</div>
+        </div>
+      </div>
+      <div class="field-error" id="err-cycletype">Please select a cycle type</div>
+    </div>
+
+    <!-- Regular cycle fields -->
+    <div id="regular-fields" class="ob-conditional show">
+      <div class="ob-field">
+        <label>Average Cycle Length (days)</label>
+        <select id="ob-cycle-length">
+          <option value="24">24 days</option>
+          <option value="25">25 days</option>
+          <option value="26">26 days</option>
+          <option value="27">27 days</option>
+          <option value="28" selected>28 days (average)</option>
+          <option value="29">29 days</option>
+          <option value="30">30 days</option>
+          <option value="32">32 days</option>
+          <option value="35">35 days</option>
+        </select>
+      </div>
+      <div class="ob-field">
+        <label>How long does your period last?</label>
+        <select id="ob-period-length">
+          <option value="3">3 days</option>
+          <option value="4">4 days</option>
+          <option value="5" selected>5 days (average)</option>
+          <option value="6">6 days</option>
+          <option value="7">7 days</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Irregular cycle fields -->
+    <div id="irregular-fields" class="ob-conditional">
+      <div class="ob-field">
+        <label>Shortest Cycle Length (days)</label>
+        <input type="number" id="ob-min-cycle" placeholder="e.g. 21" min="15" max="45" />
+        <div class="field-error" id="err-mincycle">Enter a valid number (15–45)</div>
+      </div>
+      <div class="ob-field">
+        <label>Longest Cycle Length (days)</label>
+        <input type="number" id="ob-max-cycle" placeholder="e.g. 35" min="15" max="60" />
+        <div class="field-error" id="err-maxcycle">Must be greater than shortest cycle</div>
+      </div>
+      <div class="ob-field">
+        <label>Average Period Length (days)</label>
+        <select id="ob-irreg-period-length">
+          <option value="3">3 days</option>
+          <option value="4">4 days</option>
+          <option value="5" selected>5 days</option>
+          <option value="6">6 days</option>
+          <option value="7">7 days</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="ob-field">
+      <label>Last Period Start Date</label>
+      <input type="date" id="ob-last-period" />
+      <div class="field-error" id="err-lastperiod">Please select your last period start date</div>
+    </div>
+
+    <div class="ob-section-divider"><span>Your Account</span></div>
+
+    <div class="ob-field">
+      <label>Email Address</label>
+      <input type="email" id="ob-email" placeholder="amina@gmail.com" autocomplete="email" />
+      <div class="field-error" id="err-email">Please enter a valid email address</div>
+    </div>
+
+    <button class="btn-primary" onclick="startApp()">Ingia — Let's Go! 🌺</button>
+    <p style="text-align:center;margin-top:14px;font-size:12px;color:var(--text-light);">Already have an account? <span onclick="switchAuthTab('login')" style="color:var(--pink-dark);font-weight:700;cursor:pointer;">Sign in →</span></p>
+    </div><!-- end ob-signup-section -->
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div>
+      <div class="topbar-logo">Hisia</div>
+      <div class="topbar-greeting" id="greeting">Habari!</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button onclick="openShareModal()" style="background:var(--pink-light);border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;" title="Share with a friend">🔗</button>
+      <div class="topbar-avatar" id="avatar">A</div>
+    </div>
+  </div>
+
+  <!-- TRACKER -->
+  <div class="screen active" id="screen-tracker">
+    <div class="cycle-hero" id="cycle-hero">
+      <h2 id="hero-title">Hii ni mzuri! 🌸</h2>
+      <p id="hero-sub">Your cycle is on track, babe</p>
+      <div class="cycle-countdown">
+        <div>
+          <div class="countdown-days" id="days-countdown">—</div>
+          <div class="countdown-label" id="countdown-label">days until your next period</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:13px;opacity:0.9">Cycle Day</div>
+          <div style="font-size:28px;font-weight:900" id="cycle-day">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="irregular-range-info" style="display:none">
+      <div class="irregular-banner">⚠️ <span id="irregular-range-text">Your period is expected within a range — predictions are approximate.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" id="cal-title">📅</div>
+      <div class="card-sub">Your cycle at a glance</div>
+      <div class="calendar-grid">
+        <div class="cal-day-name">S</div><div class="cal-day-name">M</div><div class="cal-day-name">T</div>
+        <div class="cal-day-name">W</div><div class="cal-day-name">T</div><div class="cal-day-name">F</div><div class="cal-day-name">S</div>
+      </div>
+      <div class="calendar-grid" id="cal-grid"></div>
+      <div class="cal-legend" id="cal-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--pink)"></div>Period</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--lavender)"></div>Ovulation</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--mint)"></div>Fertile</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">How are you feeling today? 💭</div>
+      <div class="card-sub">Tap all that apply</div>
+      <div class="symptoms-grid" id="symptom-chips">
+        <div class="symptom-chip" onclick="toggleSymptom(this,'cramps')"><span class="sym-icon">😣</span>Cramps</div>
+        <div class="symptom-chip" onclick="toggleSymptom(this,'headache')"><span class="sym-icon">🤕</span>Headache</div>
+        <div class="symptom-chip" onclick="toggleSymptom(this,'fatigue')"><span class="sym-icon">😴</span>Fatigue</div>
+        <div class="symptom-chip" onclick="toggleSymptom(this,'bloating')"><span class="sym-icon">🫃</span>Bloating</div>
+        <div class="symptom-chip" onclick="toggleSymptom(this,'moody')"><span class="sym-icon">😤</span>Moody</div>
+        <div class="symptom-chip" onclick="toggleSymptom(this,'cravings')"><span class="sym-icon">🍫</span>Cravings</div>
+        <div class="symptom-chip" onclick="toggleSymptom(this,'discharge')"><span class="sym-icon">💧</span>Discharge</div>
+        <div class="symptom-chip" onclick="toggleSymptom(this,'backpain')"><span class="sym-icon">🔥</span>Back Pain</div>
+        <div class="symptom-chip" onclick="toggleSymptom(this,'good')"><span class="sym-icon">😊</span>Feeling Good</div>
+      </div>
+      <button class="btn-primary" style="margin-top:16px" onclick="saveSymptoms()">Save Today's Log</button>
+    </div>
+
+    <div class="card-title" style="margin-bottom:12px">Your Insights ✨</div>
+    <div class="insights-row">
+      <div class="insight-card pink"><div class="insight-value" id="ins-cycle">—</div><div class="insight-label">Avg Cycle (days)</div></div>
+      <div class="insight-card lavender"><div class="insight-value" id="ins-period">—</div><div class="insight-label">Period Length</div></div>
+      <div class="insight-card mint"><div class="insight-value" id="ins-ovulation">—</div><div class="insight-label">Ovulation Day</div></div>
+      <div class="insight-card yellow"><div class="insight-value" id="ins-tracked">0</div><div class="insight-label">Days Logged</div></div>
+    </div>
+
+    <!-- YEAR VIEW -->
+    <div class="card" style="margin-top:16px">
+      <div class="year-view-header">
+        <div class="year-view-title">Year Overview 🗓️</div>
+        <div class="year-tabs">
+          <div class="year-tab active" id="tab-months" onclick="switchYearView('months')">Months</div>
+          <div class="year-tab" id="tab-timeline" onclick="switchYearView('timeline')">Timeline</div>
+        </div>
+      </div>
+
+      <!-- Month scroll view -->
+      <div id="year-months-view">
+        <div class="year-nav">
+          <button class="year-nav-btn" onclick="shiftYear(-1)">&#8249;</button>
+          <div class="year-nav-label" id="year-nav-label">2026</div>
+          <button class="year-nav-btn" onclick="shiftYear(1)">&#8250;</button>
+        </div>
+        <div class="year-scroll" id="year-scroll"></div>
+      </div>
+
+      <!-- Timeline view -->
+      <div id="year-timeline-view" style="display:none">
+        <div class="year-nav">
+          <button class="year-nav-btn" onclick="shiftYear(-1)">&#8249;</button>
+          <div class="year-nav-label" id="year-nav-label-2">2026</div>
+          <button class="year-nav-btn" onclick="shiftYear(1)">&#8250;</button>
+        </div>
+        <div id="year-timeline-rows"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOP -->
+  <div class="screen" id="screen-shop">
+    <div class="section-header">
+      <div class="section-title">Period Package 📦</div>
+      <div class="badge">Discreet Delivery</div>
+    </div>
+
+    <!-- DEV DISCLAIMER -->
+    <div class="dev-disclaimer">
+      <span class="disc-icon">🛠️</span>
+      <div>
+        <strong>Feature in Development</strong>
+        Browsing and building your cart is fully active. Real purchases will be enabled once we finish onboarding our partner vendors. Your interest helps us prioritise!
+      </div>
+    </div>
+    <div class="featured-brand">
+      <div>
+        <div class="brand-badge">Featured Brand</div>
+        <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-top:6px">Softcare Kenya</div>
+        <div style="font-size:12px;color:var(--text-light);margin-top:2px">Free delivery on orders over KES 500</div>
+      </div>
+      <div style="font-size:48px">🌸</div>
+    </div>
+    <div class="card-title" style="margin-bottom:12px">Build Your Package 🛍️</div>
+    <div class="products-grid" id="products-grid"></div>
+    <div style="height:70px"></div>
+    <div class="cart-summary hidden" id="cart-summary" onclick="openDeliveryModal()">
+      <div>
+        <div class="cart-count" id="cart-count">0 items</div>
+        <div style="font-size:11px;opacity:0.8">Tap to checkout • Discreet delivery 📦</div>
+      </div>
+      <div class="cart-total" id="cart-total">KES 0</div>
+    </div>
+  </div>
+
+  <!-- IS THIS NORMAL -->
+  <div class="screen" id="screen-itn">
+    <div class="itn-intro">
+      <div class="emoji">🤔</div>
+      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700">Is This Normal?</div>
+      <div style="font-size:13px;color:var(--text-light);margin-top:4px">Shida yako ni ya kawaida au la?<br>Select your symptoms and find out</div>
+    </div>
+    <div class="card">
+      <div class="card-title">What are you experiencing? 👇</div>
+      <div class="card-sub">Select all that apply — tunasikiliza</div>
+      <div class="symptom-select-grid" id="itn-symptoms">
+        <div class="symptom-select-item" onclick="selectITN(this,'cramps')"><span class="si-icon">😣</span><div><div class="si-text">Severe Cramps</div><div class="si-sw">Maumivu makali</div></div></div>
+        <div class="symptom-select-item" onclick="selectITN(this,'irregular')"><span class="si-icon">📅</span><div><div class="si-text">Irregular Periods</div><div class="si-sw">Hedhi isiyolingana</div></div></div>
+        <div class="symptom-select-item" onclick="selectITN(this,'heavy')"><span class="si-icon">💧</span><div><div class="si-text">Very Heavy Flow</div><div class="si-sw">Damu nyingi sana</div></div></div>
+        <div class="symptom-select-item" onclick="selectITN(this,'pain_sex')"><span class="si-icon">💔</span><div><div class="si-text">Pain During Sex</div><div class="si-sw">Maumivu wakati wa ngono</div></div></div>
+        <div class="symptom-select-item" onclick="selectITN(this,'acne')"><span class="si-icon">😤</span><div><div class="si-text">Bad Acne</div><div class="si-sw">Chunusi nyingi</div></div></div>
+        <div class="symptom-select-item" onclick="selectITN(this,'weight')"><span class="si-icon">⚖️</span><div><div class="si-text">Weight Changes</div><div class="si-sw">Uzito kubadilika</div></div></div>
+        <div class="symptom-select-item" onclick="selectITN(this,'bloat')"><span class="si-icon">🫃</span><div><div class="si-text">Severe Bloating</div><div class="si-sw">Tumbo kujaa sana</div></div></div>
+        <div class="symptom-select-item" onclick="selectITN(this,'spotting')"><span class="si-icon">🔴</span><div><div class="si-text">Spotting Between Periods</div><div class="si-sw">Damu kidogo kabla ya hedhi</div></div></div>
+      </div>
+      <button class="btn-primary" style="margin-top:16px" onclick="checkSymptoms()">Check My Symptoms →</button>
+    </div>
+    <div id="itn-result"></div>
+  </div>
+
+  <!-- MY RECORDS -->
+  <div class="screen" id="screen-records">
+    <div class="section-title" style="margin-bottom:16px">My Records 📋</div>
+    <div class="stats-row">
+      <div class="stat-box pink"><div class="stat-value" id="stat-total">0</div><div class="stat-label">Days Logged</div></div>
+      <div class="stat-box lav"><div class="stat-value" id="stat-work">0</div><div class="stat-label">Work Days</div></div>
+      <div class="stat-box mint"><div class="stat-value" id="stat-school">0</div><div class="stat-label">School Days</div></div>
+    </div>
+
+    <div class="rights-card">
+      <h3>🏛️ Know Your Rights</h3>
+      <div class="right-item">
+        <strong>📍 Nairobi County Menstrual Leave Policy (Dec 2025)</strong>
+        County government employees are entitled to 2 paid menstrual leave days per month — no questions asked, no forms to fill. This is on top of sick and annual leave.
+      </div>
+      <div class="right-item">
+        <strong>⚖️ Article 43 — Constitution of Kenya 2010</strong>
+        You have the constitutional right to the highest attainable standard of health, including reproductive health care. This is your right as a Kenyan.
+      </div>
+      <div class="right-item">
+        <strong>📜 Sanitary Towels Bill 2024 (Pending)</strong>
+        This bill, currently awaiting enactment, seeks to provide free quality sanitary towels in all public institutions in Kenya.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Log a Day 📝</div>
+      <div class="card-sub">Record your affected days privately and securely</div>
+      <div class="log-form">
+        <input type="date" id="log-date" />
+        <select id="log-type">
+          <option value="">What did you miss?</option>
+          <option value="work">Work day</option>
+          <option value="school">School / University</option>
+          <option value="both">Both work &amp; school</option>
+        </select>
+        <select id="log-severity">
+          <option value="">Severity of symptoms</option>
+          <option value="mild">Mild — manageable</option>
+          <option value="moderate">Moderate — needed rest</option>
+          <option value="severe">Severe — couldn't function</option>
+        </select>
+        <textarea id="log-note" placeholder="Optional: note what you experienced..." rows="2" style="resize:none"></textarea>
+        <button class="btn-primary" onclick="addLogEntry()">Save to My Records ✅</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Recent Entries 🗓️</div>
+      <div id="log-entries">
+        <div class="empty-state">
+          <div class="es-icon">📋</div>
+          <p>No records yet.<br>Log your first day above.</p>
+        </div>
+      </div>
+      <button class="btn-outline" style="margin-top:16px" onclick="showToast('Exporting PDF report... 📄','success')">Export as PDF Report 📄</button>
+    </div>
+  </div>
+
+  <!-- FIND CARE -->
+  <div class="screen" id="screen-care">
+    <div class="section-title" style="margin-bottom:16px">Find Care 🏥</div>
+
+    <!-- DEV DISCLAIMER -->
+    <div class="dev-disclaimer">
+      <span class="disc-icon">🏗️</span>
+      <div>
+        <strong>Clinic Onboarding in Progress</strong>
+        We are actively partnering with clinics and hospitals across Kenya. Booking will go live soon — explore and save your preferred clinics now!
+      </div>
+    </div>
+    <input type="text" class="symptom-search" placeholder="🔍 Describe your symptoms or condition..." oninput="filterClinics(this.value)" />
+    <div class="filter-chips">
+      <div class="filter-chip active" onclick="setFilter(this,'all')">All</div>
+      <div class="filter-chip" onclick="setFilter(this,'nhif')">NHIF Accepted</div>
+      <div class="filter-chip" onclick="setFilter(this,'female')">Female Doctor</div>
+      <div class="filter-chip" onclick="setFilter(this,'endo')">Endometriosis</div>
+      <div class="filter-chip" onclick="setFilter(this,'pcos')">PCOS</div>
+      <div class="filter-chip" onclick="setFilter(this,'affordable')">Affordable</div>
+    </div>
+    <div id="clinics-list"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="navigate('tracker',this)"><span class="nav-icon">🩸</span><span class="nav-label">Tracker</span></button>
+    <button class="nav-item" onclick="navigate('shop',this)"><span class="nav-icon">📦</span><span class="nav-label">Shop</span></button>
+    <button class="nav-item" onclick="navigate('itn',this)"><span class="nav-icon">🤔</span><span class="nav-label">Normal?</span></button>
+    <button class="nav-item" onclick="navigate('records',this)"><span class="nav-icon">📋</span><span class="nav-label">Records</span></button>
+    <button class="nav-item" onclick="navigate('care',this)"><span class="nav-icon">🏥</span><span class="nav-label">Find Care</span></button>
+  </nav>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal-overlay" id="share-modal" style="z-index:1000;">
+  <div class="modal" style="padding:28px 24px;border-radius:28px;max-width:380px;width:90%;">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:48px;margin-bottom:8px;">🔗</div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:22px;margin-bottom:6px;">Share Your Tracker</h2>
+      <p style="font-size:13px;color:var(--text-light);">Invite a trusted friend or partner to view your cycle tracker — they can follow along without editing anything.</p>
+    </div>
+
+    <!-- Share via link -->
+    <div style="background:var(--bg);border-radius:14px;padding:16px;margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:800;color:var(--pink-dark);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Share Link</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="text" id="share-link-input" readonly style="flex:1;padding:10px 12px;border:2px solid var(--pink-light);border-radius:10px;font-size:12px;font-family:'Nunito',sans-serif;background:white;color:var(--text);outline:none;" placeholder="Generating link..." />
+        <button onclick="copyShareLink()" style="background:var(--pink);border:none;border-radius:10px;padding:10px 14px;color:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;" id="copy-btn">Copy 📋</button>
+      </div>
+    </div>
+
+    <!-- Share via native share / WhatsApp -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button onclick="shareViaWhatsApp()" style="flex:1;padding:12px;background:#25D366;color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">📱 WhatsApp</button>
+      <button onclick="shareViaNative()" id="native-share-btn" style="flex:1;padding:12px;background:var(--lavender);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">⬆️ Share</button>
+    </div>
+
+    <!-- Invite by email -->
+    <div style="background:var(--bg);border-radius:14px;padding:16px;margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:800;color:var(--pink-dark);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Invite by Email</div>
+      <div style="display:flex;gap:8px;">
+        <input type="email" id="invite-email-input" placeholder="friend@email.com" style="flex:1;padding:10px 12px;border:2px solid var(--pink-light);border-radius:10px;font-size:13px;font-family:'Nunito',sans-serif;outline:none;background:white;" />
+        <button onclick="sendInviteEmail()" style="background:var(--pink-dark);border:none;border-radius:10px;padding:10px 14px;color:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;">Send 💌</button>
+      </div>
+      <p style="font-size:11px;color:var(--text-light);margin-top:8px;">They'll get a read-only view — no sign-up needed.</p>
+    </div>
+
+    <!-- Active shares list -->
+    <div id="active-shares-section" style="display:none;margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:800;color:var(--pink-dark);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Currently Shared With</div>
+      <div id="active-shares-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+
+    <button onclick="closeShareModal()" style="width:100%;padding:14px;background:var(--pink-light);border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--pink-dark);cursor:pointer;">Done ✓</button>
+  </div>
+</div>
+
+<!-- COMING SOON MODAL -->
+<div class="cs-overlay" id="cs-modal">
+  <div class="cs-sheet">
+    <div class="cs-hero">
+      <span class="cs-emoji" id="cs-emoji">🚀</span>
+      <div class="cs-title" id="cs-title">Coming Soon!</div>
+      <div class="cs-sub" id="cs-sub">This feature is almost ready for you.</div>
+    </div>
+    <div class="cs-body">
+      <div class="cs-message" id="cs-message">
+        This feature is currently in development. We are onboarding clinics and shops to activate real bookings and purchases. Everything you see is a working prototype — the real experience is coming very soon!
+      </div>
+      <div class="cs-steps" id="cs-steps">
+        <div class="cs-step"><div class="cs-step-dot">1</div><span>Browse and explore — everything is interactive</span></div>
+        <div class="cs-step"><div class="cs-step-dot">2</div><span>We finalise partnerships with vendors &amp; clinics</span></div>
+        <div class="cs-step"><div class="cs-step-dot">3</div><span>Real transactions go live — you get notified first</span></div>
+      </div>
+      <div class="cs-notify-row">
+        <input type="tel" class="cs-notify-input" id="cs-phone" placeholder="Your phone number (optional)" />
+        <button class="cs-notify-btn" onclick="submitNotifyMe()">Notify Me</button>
+      </div>
+      <button class="btn-primary" onclick="closeCSModal()" style="margin-top:4px">Got it — Keep Exploring 🌸</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELIVERY MODAL -->
+<div class="modal-overlay" id="delivery-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Your Period Package 🌸</h3>
+    <div id="modal-items"></div>
+    <div class="discreet-tag">📦 All packages delivered in plain, unmarked packaging — always discreet</div>
+    <div style="font-weight:700;font-size:14px;margin:12px 0 8px">Delivery Options</div>
+    <div class="delivery-options">
+      <div class="delivery-opt selected" id="del-sameday" onclick="selectDelivery(this, 200)">
+        <div style="font-size:20px;margin-bottom:4px">⚡</div>
+        <div class="delivery-opt-title">Same Day</div>
+        <div class="delivery-opt-sub">KES 200 • 2–4 hrs</div>
+      </div>
+      <div class="delivery-opt" id="del-scheduled" onclick="selectDelivery(this, 0)">
+        <div style="font-size:20px;margin-bottom:4px">📅</div>
+        <div class="delivery-opt-title">Schedule</div>
+        <div class="delivery-opt-sub">Free • Before Period</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--pink-light);margin-top:8px">
+      <div style="font-size:15px;font-weight:700">Total</div>
+      <div style="font-size:22px;font-weight:900;color:var(--pink-dark)" id="modal-total">KES 0</div>
+    </div>
+    <button class="btn-primary" onclick="placeOrder()">Place Order 🛍️</button>
+    <button class="btn-outline" style="margin-top:10px" onclick="closeModal()">Continue Shopping</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== SUPABASE INIT =====
+const SUPABASE_URL = 'https://lxjbmdiytlqmhfjucopn.supabase.co'
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4amJtZGl5dGxxbWhmanVjb3BuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyODIxNTUsImV4cCI6MjA5Mjg1ODE1NX0.g9dDU0gUc2ts16ZyX1iS3M7XDh3oBRxiLdVOtkN5NyM'
+const _supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null
+
+// ===== STATE =====
+let profile = {};
+let cart = [];
+let itnSelected = [];
+let activeFilter = 'all';
+let selectedDeliveryCost = 200;
+let todaySymptoms = [];
+
+// ===== DATA =====
+const products = [
+  { id:1, name:'Always Maxi Pads',    brand:'Always',          price:180, emoji:'🩹', category:'pads' },
+  { id:2, name:'Softcare Ultra Thin', brand:'Softcare',         price:150, emoji:'🌸', category:'pads' },
+  { id:3, name:'Celia Tampons',       brand:'Celia',            price:220, emoji:'💧', category:'tampons' },
+  { id:4, name:'Paracetamol 500mg',   brand:'Dawa Limited',     price:50,  emoji:'💊', category:'medicine' },
+  { id:5, name:'Ibuprofen 400mg',     brand:'Medisel',          price:80,  emoji:'💊', category:'medicine' },
+  { id:6, name:'Heating Pad',         brand:'HealthCare KE',    price:450, emoji:'🔥', category:'comfort' },
+  { id:7, name:'Dark Chocolate',      brand:'Cadbury Kenya',    price:120, emoji:'🍫', category:'comfort' },
+  { id:8, name:'Iron Supplement',     brand:'PharmKenya',       price:250, emoji:'💪', category:'supplements' },
+];
+
+const clinics = [
+  { name:'Kenyatta National Hospital', area:'Upper Hill, Nairobi',  avatar:'🏥', color:'pink', tags:['nhif','female','endo','pcos'],              tagLabels:['NHIF ✓','Female Drs','Endo Clinic'], cost:'KES 200–500',     rating:'4.2' },
+  { name:'Avenue Hospital',            area:'Parklands, Nairobi',   avatar:'🏨', color:'lav',  tags:['female','pcos','endo','affordable'],          tagLabels:['Female Drs','PCOS Clinic','Affordable'], cost:'KES 500–1,500', rating:'4.5' },
+  { name:"Nairobi Women's Hospital",   area:'Hurlingam, Nairobi',   avatar:'🌸', color:'mint', tags:['nhif','female','endo','pcos','affordable'],    tagLabels:['NHIF ✓','Women Only','Endo & PCOS'], cost:'KES 300–800',    rating:'4.7' },
+  { name:'MP Shah Hospital',           area:'Parklands, Nairobi',   avatar:'⚕️', color:'pink', tags:['nhif','female'],                               tagLabels:['NHIF ✓','Female Drs'], cost:'KES 800–2,000',              rating:'4.4' },
+  { name:'The Gynaecology Clinic',     area:'Westlands, Nairobi',   avatar:'👩‍⚕️', color:'lav', tags:['female','endo','pcos'],                   tagLabels:['Women Specialists','Endo','PCOS'], cost:'KES 1,000–3,000', rating:'4.8' },
+  { name:"Mombasa Women's Clinic",     area:'Nyali, Mombasa',       avatar:'🌴', color:'mint', tags:['nhif','female','affordable'],                  tagLabels:['NHIF ✓','Female Drs','Affordable'], cost:'KES 200–600',    rating:'4.3' },
+];
+
+const itnResults = {
+  cramps:    { type:'monitor', status:'Angalia hii 👀 Monitor This', desc:'Mild to moderate cramps are very common — about 80% of women experience them. However, if your cramps are so severe they stop you from going to school or work, that\'s worth noting. It could be primary dysmenorrhea (painful periods) or something like endometriosis.', condition:'Possible: Primary Dysmenorrhea / Endometriosis' },
+  irregular: { type:'doctor',  status:'Ona daktari 🏥 See a Doctor', desc:'Irregular periods can be caused by stress, diet changes, or hormonal imbalances — but they can also be a sign of PCOS (Polycystic Ovary Syndrome), thyroid issues, or other conditions that are very treatable once diagnosed. Don\'t ignore this.', condition:'Possible: PCOS / Thyroid Issues / Hormonal Imbalance' },
+  heavy:     { type:'doctor',  status:'Ona daktari 🏥 See a Doctor', desc:'Soaking more than one pad or tampon per hour, or passing large clots, is considered heavy bleeding (menorrhagia). This can lead to anemia and is often linked to fibroids, endometriosis, or hormonal issues. Please see a gynecologist.', condition:'Possible: Fibroids / Endometriosis / Anemia' },
+  pain_sex:  { type:'doctor',  status:'Ona daktari 🏥 See a Doctor', desc:'Pain during sex (dyspareunia) is NOT normal and should never be dismissed. It\'s one of the most common signs of endometriosis — a condition that affects 1 in 10 women but takes an average of 7 years to diagnose in Kenya. You deserve answers.', condition:'Possible: Endometriosis / Ovarian Cysts' },
+  acne:      { type:'monitor', status:'Angalia hii 👀 Monitor This', desc:'Hormonal acne that flares around your period is common and linked to progesterone changes. But severe, persistent acne alongside other symptoms could signal PCOS. Track when it appears in your cycle.', condition:'Possible: Hormonal Acne / PCOS' },
+  weight:    { type:'monitor', status:'Angalia hii 👀 Monitor This', desc:'Some bloating and weight fluctuation (1–3kg) around your period is completely normal due to water retention. Significant unexplained weight gain or difficulty losing weight, especially with other symptoms, may point to PCOS or thyroid issues.', condition:'Possible: Normal / PCOS / Thyroid' },
+  bloat:     { type:'normal',  status:'Hii ni kawaida ✅ This is Normal', desc:'Bloating before and during your period is extremely common — it\'s caused by hormonal changes that make your body retain water. It should ease within a day or two of your period starting. Reduce salt, drink more water, and try light movement.', condition:'Caused by normal hormonal changes — totally okay!' },
+  spotting:  { type:'doctor',  status:'Ona daktari 🏥 See a Doctor', desc:'Light spotting around ovulation can be normal, but regular spotting between periods is worth investigating. It can be caused by hormonal contraceptives, polyps, cervical issues, or other conditions that are easily treated when caught early.', condition:'Possible: Cervical Polyps / Hormonal Issues / Fibroids' },
+};
+
+// ===== LOCAL STORAGE =====
+const LS_KEY = 'hisia_v2';
+
+function saveState() {
+  const existing = loadState() || {};
+  const data = { profile, cart, logEntries: getLogEntries(), todaySymptoms, shareToken: existing.shareToken || shareToken };
+  localStorage.setItem(LS_KEY, JSON.stringify(data));
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function getLogEntries() {
+  const container = document.getElementById('log-entries');
+  const entries = container.querySelectorAll('.log-entry');
+  return Array.from(entries).map(el => ({
+    html: el.outerHTML
+  }));
+}
+
+// ===== ONBOARDING =====
+let selectedCycleType = 'regular';
+
+function selectCycleType(type) {
+  selectedCycleType = type;
+  document.getElementById('opt-regular').classList.toggle('selected', type === 'regular');
+  document.getElementById('opt-irregular').classList.toggle('selected', type === 'irregular');
+  document.getElementById('regular-fields').classList.toggle('show', type === 'regular');
+  document.getElementById('irregular-fields').classList.toggle('show', type === 'irregular');
+}
+
+function clearErrors() {
+  document.querySelectorAll('.ob-field input, .ob-field select').forEach(el => el.classList.remove('error'));
+  document.querySelectorAll('.field-error').forEach(el => el.classList.remove('show'));
+}
+
+function showFieldError(fieldId, errId) {
+  const field = document.getElementById(fieldId);
+  const err   = document.getElementById(errId);
+  if (field) field.classList.add('error');
+  if (err)   err.classList.add('show');
+}
+
+function validateOnboarding() {
+  clearErrors();
+  let valid = true;
+
+  const name = document.getElementById('ob-name').value.trim();
+  const age  = parseInt(document.getElementById('ob-age').value);
+
+  if (!name) { showFieldError('ob-name', 'err-name'); valid = false; }
+  if (!age || age < 12 || age > 55) { showFieldError('ob-age', 'err-age'); valid = false; }
+
+  if (selectedCycleType === 'irregular') {
+    const minC = parseInt(document.getElementById('ob-min-cycle').value);
+    const maxC = parseInt(document.getElementById('ob-max-cycle').value);
+    if (!minC || minC < 15 || minC > 45) { showFieldError('ob-min-cycle', 'err-mincycle'); valid = false; }
+    if (!maxC || maxC <= minC)            { showFieldError('ob-max-cycle', 'err-maxcycle'); valid = false; }
+  }
+
+  const lastPeriod = document.getElementById('ob-last-period').value;
+  if (!lastPeriod) { showFieldError('ob-last-period', 'err-lastperiod'); valid = false; }
+
+  // Email validation
+  const email = (document.getElementById('ob-email').value || '').trim();
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    showFieldError('ob-email', 'err-email'); valid = false;
+  }
+
+  return valid;
+}
+
+async function startApp() {
+  if (!validateOnboarding()) {
+    showToast('Please fill in all required fields 💕', 'warning');
+    return;
+  }
+
+  const name       = document.getElementById('ob-name').value.trim();
+  const age        = parseInt(document.getElementById('ob-age').value);
+  const county     = document.getElementById('ob-county').value;
+  const lastPeriod = document.getElementById('ob-last-period').value;
+
+  const email = document.getElementById('ob-email').value.trim();
+
+  profile = { name, age, county, email, cycleType: selectedCycleType, lastPeriodDate: lastPeriod };
+
+  if (selectedCycleType === 'regular') {
+    profile.cycleLength  = parseInt(document.getElementById('ob-cycle-length').value);
+    profile.periodLength = parseInt(document.getElementById('ob-period-length').value);
+  } else {
+    profile.minCycle     = parseInt(document.getElementById('ob-min-cycle').value);
+    profile.maxCycle     = parseInt(document.getElementById('ob-max-cycle').value);
+    profile.cycleLength  = Math.round((profile.minCycle + profile.maxCycle) / 2);
+    profile.periodLength = parseInt(document.getElementById('ob-irreg-period-length').value);
+  }
+
+  // --- Supabase signup ---
+  if (_supabase) {
+    const { data, error } = await _supabase.auth.signInWithOtp({
+      email: email,
+      options: { emailRedirectTo: window.location.href }
+    })
+    if (error) {
+      showToast('Could not send magic link: ' + error.message, 'warning');
+      return;
+    }
+    // Save profile to localStorage pending magic link confirmation
+    localStorage.setItem('hisia_pending_profile', JSON.stringify(profile));
+    showToast('Check your email for a login link 💌', 'success');
+    return;
+  }
+
+  launchApp();
+}
+
+function launchApp() {
+  document.getElementById('greeting').textContent = `Habari, ${profile.name}! 🌸`;
+  document.getElementById('avatar').textContent   = profile.name[0].toUpperCase();
+
+  document.getElementById('onboarding').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+
+  updateTrackerUI();
+  buildCalendar();
+  buildYearView();
+  buildProducts();
+  buildClinics();
+  restoreSymptoms();
+  saveState();
+}
+
+// ===== CYCLE CALCULATIONS =====
+function parseDateLocal(str) {
+  // Parse YYYY-MM-DD without timezone shift
+  const [y, m, d] = str.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function calcCycleData() {
+  const today         = new Date();
+  today.setHours(0,0,0,0);
+  const lastPeriod    = parseDateLocal(profile.lastPeriodDate);
+  const daysSinceLast = Math.floor((today - lastPeriod) / 86400000);
+  const cycleDay      = (daysSinceLast % profile.cycleLength) + 1;
+  const daysUntilNext = profile.cycleLength - cycleDay + 1;
+  const nextPeriod    = new Date(today);
+  nextPeriod.setDate(today.getDate() + daysUntilNext);
+
+  const ovulationDay  = profile.cycleLength - 14; // Day of cycle (1-indexed)
+  const fertileStart  = ovulationDay - 3;
+  const fertileEnd    = ovulationDay + 1;
+
+  return { cycleDay, daysUntilNext, nextPeriod, ovulationDay, fertileStart, fertileEnd, lastPeriod };
+}
+
+function calcIrregularData() {
+  const today         = new Date();
+  today.setHours(0,0,0,0);
+  const lastPeriod    = parseDateLocal(profile.lastPeriodDate);
+  const daysSinceLast = Math.floor((today - lastPeriod) / 86400000);
+  const avgCycle      = profile.cycleLength;
+  const cycleDay      = (daysSinceLast % avgCycle) + 1;
+
+  const minDaysUntil  = Math.max(0, profile.minCycle - cycleDay + 1);
+  const maxDaysUntil  = Math.max(0, profile.maxCycle - cycleDay + 1);
+
+  return { cycleDay, minDaysUntil, maxDaysUntil, lastPeriod, avgCycle };
+}
+
+// ===== TRACKER UI =====
+function updateTrackerUI() {
+  if (profile.cycleType === 'regular') {
+    updateRegularUI();
+  } else {
+    updateIrregularUI();
+  }
+  updateInsights();
+}
+
+function updateRegularUI() {
+  const { cycleDay, daysUntilNext, ovulationDay, fertileStart } = calcCycleData();
+
+  document.getElementById('days-countdown').textContent = daysUntilNext;
+  document.getElementById('cycle-day').textContent      = cycleDay;
+  document.getElementById('countdown-label').textContent = 'days until your next period';
+  document.getElementById('irregular-range-info').style.display = 'none';
+
+  // Hero messaging
+  if (cycleDay <= profile.periodLength) {
+    document.getElementById('hero-title').textContent = 'Pole sana 💕 Period Time';
+    document.getElementById('hero-sub').textContent   = 'Take it easy — you\'re doing great';
+  } else if (cycleDay >= fertileStart && cycleDay <= ovulationDay + 1) {
+    document.getElementById('hero-title').textContent = 'Fertile Window 🌱';
+    document.getElementById('hero-sub').textContent   = 'Your body is in its fertile phase';
+  } else {
+    document.getElementById('hero-title').textContent = 'Hii ni mzuri! 🌸';
+    document.getElementById('hero-sub').textContent   = 'Your cycle is on track, babe';
+  }
+}
+
+function updateIrregularUI() {
+  const { cycleDay, minDaysUntil, maxDaysUntil } = calcIrregularData();
+
+  document.getElementById('days-countdown').textContent = `${minDaysUntil}–${maxDaysUntil}`;
+  document.getElementById('cycle-day').textContent      = cycleDay;
+  document.getElementById('countdown-label').textContent = 'days (estimated range)';
+  document.getElementById('irregular-range-info').style.display = 'block';
+  document.getElementById('irregular-range-text').textContent =
+    `Next period estimated in ${minDaysUntil}–${maxDaysUntil} days. Predictions are approximate for irregular cycles.`;
+
+  document.getElementById('hero-title').textContent = 'Tracking Your Cycle 🔀';
+  document.getElementById('hero-sub').textContent   = 'Predictions are a helpful estimate';
+}
+
+function updateInsights() {
+  const savedLogs = document.querySelectorAll('.log-entry').length;
+
+  if (profile.cycleType === 'regular') {
+    const { ovulationDay } = calcCycleData();
+    document.getElementById('ins-cycle').textContent    = profile.cycleLength;
+    document.getElementById('ins-period').textContent   = profile.periodLength;
+    document.getElementById('ins-ovulation').textContent = `Day ${ovulationDay}`;
+  } else {
+    document.getElementById('ins-cycle').textContent    = `${profile.minCycle}–${profile.maxCycle}`;
+    document.getElementById('ins-period').textContent   = profile.periodLength;
+    document.getElementById('ins-ovulation').textContent = '~Est.';
+  }
+  document.getElementById('ins-tracked').textContent = savedLogs;
+}
+
+// ===== CALENDAR =====
+function buildCalendar() {
+  const now         = new Date();
+  const year        = now.getFullYear();
+  const month       = now.getMonth();
+  const todayDate   = now.getDate();
+  const monthNames  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const startDay    = new Date(year, month, 1).getDay(); // 0=Sun
+
+  document.getElementById('cal-title').textContent = `${monthNames[month]} ${year} 📅`;
+
+  let periodDays   = new Set();
+  let fertileDays  = new Set();
+  let ovulationDay = null;
+  let approxPeriodDays = new Set();
+  let approxFertileDays = new Set();
+
+  const lastPeriod = parseDateLocal(profile.lastPeriodDate);
+
+  if (profile.cycleType === 'regular') {
+    const { cycleLength, periodLength } = profile;
+    // Walk through cycles and mark days in current month
+    let cursor = new Date(lastPeriod);
+    const monthStart = new Date(year, month, 1);
+    const monthEnd   = new Date(year, month + 1, 0);
+
+    // Rewind cursor to first period start at or before month end
+    while (cursor <= monthEnd) {
+      const pStart = new Date(cursor);
+      // period days
+      for (let d = 0; d < periodLength; d++) {
+        const pd = new Date(pStart); pd.setDate(pd.getDate() + d);
+        if (pd.getFullYear() === year && pd.getMonth() === month) periodDays.add(pd.getDate());
+      }
+      // ovulation = cycleLength - 14 days after period start
+      const ovDate = new Date(pStart); ovDate.setDate(ovDate.getDate() + cycleLength - 14);
+      if (ovDate.getFullYear() === year && ovDate.getMonth() === month) ovulationDay = ovDate.getDate();
+      // fertile window: 3 days before ovulation to 1 day after
+      for (let d = -3; d <= 1; d++) {
+        const fd = new Date(ovDate); fd.setDate(fd.getDate() + d);
+        if (fd.getFullYear() === year && fd.getMonth() === month && !periodDays.has(fd.getDate())) {
+          fertileDays.add(fd.getDate());
+        }
+      }
+      cursor.setDate(cursor.getDate() + cycleLength);
+    }
+  } else {
+    const { minCycle, maxCycle, periodLength, cycleLength } = profile;
+    let cursor = new Date(lastPeriod);
+    const monthEnd = new Date(year, month + 1, 0);
+
+    while (cursor <= monthEnd) {
+      // Period approx range
+      const pStart = new Date(cursor);
+      for (let d = 0; d < periodLength; d++) {
+        const pd = new Date(pStart); pd.setDate(pd.getDate() + d);
+        if (pd.getFullYear() === year && pd.getMonth() === month) approxPeriodDays.add(pd.getDate());
+      }
+      // Fertile range around avg ovulation
+      const avgOv = cycleLength - 14;
+      for (let d = avgOv - 4; d <= avgOv + 2; d++) {
+        const fd = new Date(pStart); fd.setDate(fd.getDate() + d);
+        if (fd.getFullYear() === year && fd.getMonth() === month && !approxPeriodDays.has(fd.getDate())) {
+          approxFertileDays.add(fd.getDate());
+        }
+      }
+      cursor.setDate(cursor.getDate() + cycleLength);
+    }
+  }
+
+  let html = '';
+  for (let i = 0; i < startDay; i++) html += `<div class="cal-day empty"></div>`;
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    let cls = 'cal-day';
+    if (profile.cycleType === 'regular') {
+      if (periodDays.has(d))       cls += ' period';
+      else if (d === ovulationDay) cls += ' ovulation';
+      else if (fertileDays.has(d)) cls += ' fertile';
+    } else {
+      if (approxPeriodDays.has(d))  cls += ' period-approx';
+      else if (approxFertileDays.has(d)) cls += ' fertile-approx';
+    }
+    if (d === todayDate) cls += ' today';
+    html += `<div class="${cls}">${d}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML = html;
+
+  // Update legend for irregular
+  if (profile.cycleType === 'irregular') {
+    document.getElementById('cal-legend').innerHTML = `
+      <div class="legend-item"><div class="legend-dot" style="background:var(--pink-light);border:2px dashed var(--pink)"></div>Est. Period</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#E0F7FA;border:1px dashed var(--mint-dark)"></div>Est. Fertile</div>
+    `;
+  } else {
+    document.getElementById('cal-legend').innerHTML = `
+      <div class="legend-item"><div class="legend-dot" style="background:var(--pink)"></div>Period</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--lavender)"></div>Ovulation</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--mint)"></div>Fertile</div>
+    `;
+  }
+}
+
+// ===== SYMPTOMS =====
+function toggleSymptom(el, key) {
+  el.classList.toggle('selected');
+  const idx = todaySymptoms.indexOf(key);
+  if (idx > -1) todaySymptoms.splice(idx, 1);
+  else todaySymptoms.push(key);
+}
+
+function saveSymptoms() {
+  const today = new Date().toISOString().split('T')[0];
+  const allSymptoms = JSON.parse(localStorage.getItem('hisia_symptoms') || '{}');
+  allSymptoms[today] = todaySymptoms;
+  localStorage.setItem('hisia_symptoms', JSON.stringify(allSymptoms));
+  const n = todaySymptoms.length;
+  showToast(n > 0 ? `${n} symptom${n !== 1 ? 's' : ''} saved! ✅` : 'No symptoms selected — feeling good! ✅', 'success');
+  updateInsights();
+}
+
+function restoreSymptoms() {
+  const today = new Date().toISOString().split('T')[0];
+  const allSymptoms = JSON.parse(localStorage.getItem('hisia_symptoms') || '{}');
+  todaySymptoms = allSymptoms[today] || [];
+  const keyMap = { cramps:'cramps', headache:'headache', fatigue:'fatigue', bloating:'bloating', moody:'moody', cravings:'cravings', discharge:'discharge', backpain:'backpain', good:'good' };
+  const chips = document.querySelectorAll('#symptom-chips .symptom-chip');
+  const keys  = Object.keys(keyMap);
+  chips.forEach((chip, i) => {
+    if (todaySymptoms.includes(keys[i])) chip.classList.add('selected');
+  });
+}
+
+// ===== SHOP =====
+function buildProducts() {
+  const grid = document.getElementById('products-grid');
+  grid.innerHTML = products.map(p => `
+    <div class="product-card" id="pc-${p.id}" onclick="toggleCart(${p.id})">
+      <div class="product-emoji">${p.emoji}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-brand">${p.brand}</div>
+      <div class="product-price">KES ${p.price}</div>
+      <button class="product-add" onclick="event.stopPropagation();toggleCart(${p.id})" aria-label="Add ${p.name}">+</button>
+    </div>
+  `).join('');
+
+  // Restore cart state
+  cart.forEach(item => {
+    const card = document.getElementById(`pc-${item.id}`);
+    if (card) {
+      card.classList.add('in-cart');
+      card.querySelector('.product-add').textContent = '✓';
+    }
+  });
+}
+
+function toggleCart(id) {
+  const product = products.find(x => x.id === id);
+  if (!product) return;
+  const idx  = cart.findIndex(x => x.id === id);
+  const card = document.getElementById(`pc-${id}`);
+
+  if (idx > -1) {
+    cart.splice(idx, 1);
+    card.classList.remove('in-cart');
+    card.querySelector('.product-add').textContent = '+';
+  } else {
+    cart.push({ ...product });
+    card.classList.add('in-cart');
+    card.querySelector('.product-add').textContent = '✓';
+  }
+  updateCart();
+  saveState();
+}
+
+function cartSubtotal() {
+  return cart.reduce((s, p) => s + p.price, 0);
+}
+
+function updateCart() {
+  const summary = document.getElementById('cart-summary');
+  const total   = cartSubtotal();
+  document.getElementById('cart-count').textContent = `${cart.length} item${cart.length !== 1 ? 's' : ''}`;
+  document.getElementById('cart-total').textContent = `KES ${total}`;
+  summary.classList.toggle('hidden', cart.length === 0);
+}
+
+function openDeliveryModal() {
+  if (cart.length === 0) { showToast('Your cart is empty 🛍️', 'warning'); return; }
+  selectedDeliveryCost = 200; // default same-day
+  document.getElementById('del-sameday').classList.add('selected');
+  document.getElementById('del-scheduled').classList.remove('selected');
+  refreshModalTotal();
+
+  document.getElementById('modal-items').innerHTML =
+    cart.map(p => `
+      <div class="order-item">
+        <div class="order-item-name">${p.emoji} ${p.name}</div>
+        <div class="order-item-price">KES ${p.price}</div>
+      </div>
+    `).join('') +
+    `<div class="order-item">
+       <div class="order-item-name">🚚 Delivery</div>
+       <div class="order-item-price" id="modal-delivery-line">KES ${selectedDeliveryCost}</div>
+     </div>` +
+    `<div style="background:var(--yellow);border-radius:var(--radius-sm);padding:9px 12px;font-size:11px;font-weight:700;color:#6D4C41;display:flex;align-items:center;gap:6px;margin-top:10px">
+       🛠️ <span>Preview mode — no real payment will be processed</span>
+     </div>`;
+
+  document.getElementById('delivery-modal').classList.add('open');
+}
+
+function refreshModalTotal() {
+  const total = cartSubtotal() + selectedDeliveryCost;
+  document.getElementById('modal-total').textContent = `KES ${total}`;
+  const deliveryLine = document.getElementById('modal-delivery-line');
+  if (deliveryLine) deliveryLine.textContent = selectedDeliveryCost > 0 ? `KES ${selectedDeliveryCost}` : 'Free';
+}
+
+function closeModal() {
+  document.getElementById('delivery-modal').classList.remove('open');
+}
+
+function selectDelivery(el, cost) {
+  selectedDeliveryCost = cost;
+  document.querySelectorAll('.delivery-opt').forEach(x => x.classList.remove('selected'));
+  el.classList.add('selected');
+  refreshModalTotal();
+}
+
+function placeOrder() {
+  // MOCK MODE — show success simulation, no real transaction
+  const modal = document.querySelector('#delivery-modal .modal');
+  modal.innerHTML = `
+    <div class="modal-handle"></div>
+    <div class="mock-success">
+      <div class="mock-success-icon">🎉</div>
+      <div class="mock-success-title">Request Received!</div>
+      <div class="mock-success-msg">
+        Your order has been logged in our system.<br>
+        <strong>Real checkout is coming soon</strong> — we are finalising partnerships with Kenyan vendors to enable live purchases.<br><br>
+        We'll notify you the moment it goes live!
+      </div>
+      <div class="mock-success-badge">🛠️ MVP Prototype Mode</div>
+      <button class="btn-primary" onclick="closeMockSuccess()">Continue Exploring 🌸</button>
+      <div style="margin-top:10px;font-size:11px;color:var(--text-light)">No payment was processed. No data was sent.</div>
+    </div>
+  `;
+}
+
+function closeMockSuccess() {
+  // Reset modal to original structure and close
+  const overlay = document.getElementById('delivery-modal');
+  overlay.classList.remove('open');
+  setTimeout(() => {
+    overlay.querySelector('.modal').innerHTML = `
+      <div class="modal-handle"></div>
+      <h3>Your Period Package 🌸</h3>
+      <div id="modal-items"></div>
+      <div class="discreet-tag">📦 All packages delivered in plain, unmarked packaging — always discreet</div>
+      <div style="font-weight:700;font-size:14px;margin:12px 0 8px">Delivery Options</div>
+      <div class="delivery-options">
+        <div class="delivery-opt selected" id="del-sameday" onclick="selectDelivery(this, 200)">
+          <div style="font-size:20px;margin-bottom:4px">⚡</div>
+          <div class="delivery-opt-title">Same Day</div>
+          <div class="delivery-opt-sub">KES 200 • 2–4 hrs</div>
+        </div>
+        <div class="delivery-opt" id="del-scheduled" onclick="selectDelivery(this, 0)">
+          <div style="font-size:20px;margin-bottom:4px">📅</div>
+          <div class="delivery-opt-title">Schedule</div>
+          <div class="delivery-opt-sub">Free • Before Period</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--pink-light);margin-top:8px">
+        <div style="font-size:15px;font-weight:700">Total</div>
+        <div style="font-size:22px;font-weight:900;color:var(--pink-dark)" id="modal-total">KES 0</div>
+      </div>
+      <button class="btn-primary" onclick="placeOrder()">Place Order 🛍️</button>
+      <button class="btn-outline" style="margin-top:10px" onclick="closeModal()">Continue Shopping</button>
+    `;
+  }, 350);
+  // Clear cart UI
+  cart = [];
+  products.forEach(p => {
+    const card = document.getElementById(`pc-${p.id}`);
+    if (card) {
+      card.classList.remove('in-cart');
+      card.querySelector('.product-add').textContent = '+';
+    }
+  });
+  updateCart();
+  saveState();
+}
+
+// ===== IS THIS NORMAL =====
+function selectITN(el, key) {
+  el.classList.toggle('selected');
+  const idx = itnSelected.indexOf(key);
+  if (idx > -1) itnSelected.splice(idx, 1);
+  else itnSelected.push(key);
+}
+
+function checkSymptoms() {
+  if (itnSelected.length === 0) { showToast('Select at least one symptom 💕', 'warning'); return; }
+  // Priority: doctor > monitor > normal
+  let result = null;
+  for (const k of itnSelected) {
+    const r = itnResults[k];
+    if (!result || r.type === 'doctor' || (r.type === 'monitor' && result.type === 'normal')) result = r;
+  }
+  const res = document.getElementById('itn-result');
+  res.innerHTML = `
+    <div class="result-card ${result.type}">
+      <div class="result-status">${result.status}</div>
+      <div class="result-desc">${result.desc}</div>
+      <div class="result-condition">💡 ${result.condition}</div>
+      ${result.type === 'doctor' ? `<button class="btn-sm" style="margin-top:14px;width:100%" onclick="navigate('care',document.querySelectorAll('.nav-item')[4])">Find a Doctor Near You →</button>` : ''}
+    </div>
+  `;
+  res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ===== RECORDS =====
+function addLogEntry() {
+  const date     = document.getElementById('log-date').value;
+  const type     = document.getElementById('log-type').value;
+  const severity = document.getElementById('log-severity').value;
+  const note     = document.getElementById('log-note').value.trim();
+
+  if (!date) { showToast('Please select a date 📅', 'warning'); return; }
+  if (!type) { showToast('Please select what you missed 💕', 'warning'); return; }
+
+  const formatted = parseDateLocal(date).toLocaleDateString('en-KE', { day:'numeric', month:'long', year:'numeric' });
+  const typeMap   = { work:'Missed Work', school:'Missed School', both:'Missed Work & School' };
+  const pillClass = type === 'both' ? 'both' : type;
+  const pillLabel = type === 'work' ? 'Work' : type === 'school' ? 'School' : 'Both';
+  const noteHtml  = note ? `<div style="font-size:11px;color:var(--text-light);margin-top:2px">${note}</div>` : '';
+  const sevHtml   = severity ? `<div style="font-size:11px;color:var(--text-light)">${severity}</div>` : '';
+
+  const entries = document.getElementById('log-entries');
+  // Remove empty state if present
+  const emptyState = entries.querySelector('.empty-state');
+  if (emptyState) emptyState.remove();
+
+  const newEntry = document.createElement('div');
+  newEntry.className = 'log-entry';
+  newEntry.innerHTML = `
+    <div>
+      <div class="log-type">${typeMap[type]}</div>
+      <div class="log-date">${formatted}</div>
+      ${sevHtml}${noteHtml}
+    </div>
+    <span class="log-pill ${pillClass}">${pillLabel}</span>
+  `;
+  entries.insertBefore(newEntry, entries.firstChild);
+
+  // Reset form
+  document.getElementById('log-date').value     = '';
+  document.getElementById('log-type').value     = '';
+  document.getElementById('log-severity').value = '';
+  document.getElementById('log-note').value     = '';
+
+  updateRecordStats();
+  updateInsights();
+  saveState();
+  showToast('Entry saved to your records ✅', 'success');
+}
+
+function updateRecordStats() {
+  const entries = document.querySelectorAll('#log-entries .log-entry');
+  let work = 0, school = 0;
+  entries.forEach(e => {
+    const pill = e.querySelector('.log-pill');
+    if (!pill) return;
+    if (pill.classList.contains('work'))   work++;
+    if (pill.classList.contains('school')) school++;
+    if (pill.classList.contains('both'))   { work++; school++; }
+  });
+  document.getElementById('stat-total').textContent  = entries.length;
+  document.getElementById('stat-work').textContent   = work;
+  document.getElementById('stat-school').textContent = school;
+}
+
+// ===== CLINICS =====
+function buildClinics() { renderClinics(clinics); }
+
+function renderClinics(list) {
+  const container = document.getElementById('clinics-list');
+  if (list.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="es-icon">🏥</div><p>No clinics match your search.<br>Try different keywords or filters.</p></div>`;
+    return;
+  }
+  container.innerHTML = list.map(c => `
+    <div class="clinic-card">
+      <div class="clinic-avatar ${c.color}">${c.avatar}</div>
+      <div style="flex:1">
+        <div class="clinic-name">${c.name}</div>
+        <div class="clinic-area">📍 ${c.area}</div>
+        <div class="clinic-tags">
+          ${c.tagLabels.map(t => `<span class="clinic-tag tag-female">${t}</span>`).join('')}
+          <span class="clinic-tag tag-cost">${c.cost}</span>
+        </div>
+        <button class="clinic-book" onclick="openCSModal('booking','${c.name}')">Book Appointment ⭐ ${c.rating}</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterClinics(val) {
+  val = val.toLowerCase().trim();
+  if (val === '') { renderClinics(clinics); return; }
+  const filtered = clinics.filter(c =>
+    c.name.toLowerCase().includes(val) ||
+    c.area.toLowerCase().includes(val) ||
+    c.tags.some(t => t.toLowerCase().includes(val)) ||
+    c.tagLabels.some(t => t.toLowerCase().includes(val)) ||
+    c.cost.toLowerCase().includes(val)
+  );
+  renderClinics(filtered);
+}
+
+function setFilter(el, filter) {
+  document.querySelectorAll('.filter-chip').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+  activeFilter = filter;
+  if (filter === 'all') renderClinics(clinics);
+  else renderClinics(clinics.filter(c => c.tags.includes(filter)));
+  // Clear search input when filter chip selected
+  document.querySelector('.symptom-search').value = '';
+}
+
+// ===== NAVIGATION =====
+function navigate(screen, navEl) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`screen-${screen}`).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  const cartSummary = document.getElementById('cart-summary');
+  if (screen !== 'shop') cartSummary.classList.add('hidden');
+  else if (cart.length > 0) cartSummary.classList.remove('hidden');
+}
+
+// ===== TOAST =====
+let toastTimer = null;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = `toast${type ? ' ' + type : ''}`;
+  t.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ===== YEAR VIEW =====
+let yearViewYear  = new Date().getFullYear();
+let yearViewMode  = 'months'; // 'months' | 'timeline'
+
+const MONTH_NAMES  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTH_SHORT  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function switchYearView(mode) {
+  yearViewMode = mode;
+  document.getElementById('tab-months').classList.toggle('active', mode === 'months');
+  document.getElementById('tab-timeline').classList.toggle('active', mode === 'timeline');
+  document.getElementById('year-months-view').style.display   = mode === 'months'   ? 'block' : 'none';
+  document.getElementById('year-timeline-view').style.display = mode === 'timeline' ? 'block' : 'none';
+  buildYearView();
+}
+
+function shiftYear(delta) {
+  yearViewYear += delta;
+  buildYearView();
+}
+
+function buildYearView() {
+  document.getElementById('year-nav-label').textContent   = yearViewYear;
+  document.getElementById('year-nav-label-2').textContent = yearViewYear;
+  if (yearViewMode === 'months')   buildYearMonths();
+  else                             buildYearTimeline();
+}
+
+/** Returns cycle highlight data for a given calendar month/year */
+function getMonthHighlights(year, month) {
+  const daysInMonth  = new Date(year, month + 1, 0).getDate();
+  const lastPeriod   = parseDateLocal(profile.lastPeriodDate);
+  const isRegular    = profile.cycleType === 'regular';
+  const cycleLength  = profile.cycleLength;
+  const periodLength = profile.periodLength;
+
+  const periodSet   = new Set();
+  const fertileSet  = new Set();
+  let   ovDay       = null;
+  const approxPeriodSet  = new Set();
+  const approxFertileSet = new Set();
+
+  const monthEnd = new Date(year, month + 1, 0);
+  let cursor = new Date(lastPeriod);
+
+  // Walk backwards to find the earliest cycle that could affect this month
+  while (cursor > monthEnd) cursor.setDate(cursor.getDate() - cycleLength);
+  // Now walk forward covering this month
+  for (let safety = 0; safety < 20; safety++) {
+    if (cursor > monthEnd) break;
+    const pStart = new Date(cursor);
+
+    if (isRegular) {
+      for (let d = 0; d < periodLength; d++) {
+        const pd = new Date(pStart); pd.setDate(pd.getDate() + d);
+        if (pd.getFullYear() === year && pd.getMonth() === month) periodSet.add(pd.getDate());
+      }
+      const ovDate = new Date(pStart); ovDate.setDate(ovDate.getDate() + cycleLength - 14);
+      if (ovDate.getFullYear() === year && ovDate.getMonth() === month) ovDay = ovDate.getDate();
+      for (let d = -3; d <= 1; d++) {
+        const fd = new Date(ovDate); fd.setDate(fd.getDate() + d);
+        if (fd.getFullYear() === year && fd.getMonth() === month && !periodSet.has(fd.getDate())) {
+          fertileSet.add(fd.getDate());
+        }
+      }
+    } else {
+      for (let d = 0; d < periodLength; d++) {
+        const pd = new Date(pStart); pd.setDate(pd.getDate() + d);
+        if (pd.getFullYear() === year && pd.getMonth() === month) approxPeriodSet.add(pd.getDate());
+      }
+      const avgOv = cycleLength - 14;
+      for (let d = avgOv - 4; d <= avgOv + 2; d++) {
+        const fd = new Date(pStart); fd.setDate(fd.getDate() + d);
+        if (fd.getFullYear() === year && fd.getMonth() === month && !approxPeriodSet.has(fd.getDate())) {
+          approxFertileSet.add(fd.getDate());
+        }
+      }
+    }
+    cursor.setDate(cursor.getDate() + cycleLength);
+  }
+
+  return { periodSet, fertileSet, ovDay, approxPeriodSet, approxFertileSet, daysInMonth };
+}
+
+function buildYearMonths() {
+  const container = document.getElementById('year-scroll');
+  const now       = new Date();
+  const todayY    = now.getFullYear();
+  const todayM    = now.getMonth();
+  const todayD    = now.getDate();
+  const isRegular = profile.cycleType === 'regular';
+
+  let html = '';
+
+  for (let m = 0; m < 12; m++) {
+    const { periodSet, fertileSet, ovDay, approxPeriodSet, approxFertileSet, daysInMonth } = getMonthHighlights(yearViewYear, m);
+    const startDay   = new Date(yearViewYear, m, 1).getDay();
+    const isCurrent  = yearViewYear === todayY && m === todayM;
+    const isPast     = yearViewYear < todayY || (yearViewYear === todayY && m < todayM);
+
+    // Build badge
+    let badge = '';
+    if (isCurrent) badge = `<span class="mini-month-badge current">Now</span>`;
+    else if (isRegular && ovDay) badge = `<span class="mini-month-badge fertile">Ov. Day ${ovDay}</span>`;
+    else if (!isRegular && approxPeriodSet.size > 0) badge = `<span class="mini-month-badge approx">~Period</span>`;
+
+    // Build grid
+    let gridHtml = `<div class="mini-grid">
+      <div class="mini-day-name">S</div><div class="mini-day-name">M</div><div class="mini-day-name">T</div>
+      <div class="mini-day-name">W</div><div class="mini-day-name">T</div><div class="mini-day-name">F</div><div class="mini-day-name">S</div>`;
+
+    for (let i = 0; i < startDay; i++) gridHtml += `<div class="mini-day empty"></div>`;
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const isToday = isCurrent && d === todayD;
+      const pastDay = isPast || (isCurrent && d < todayD);
+      let cls = 'mini-day';
+      if (isRegular) {
+        if (periodSet.has(d))       cls += ' period';
+        else if (d === ovDay)       cls += ' ovulation';
+        else if (fertileSet.has(d)) cls += ' fertile';
+      } else {
+        if (approxPeriodSet.has(d))  cls += ' period-approx';
+        else if (approxFertileSet.has(d)) cls += ' fertile-approx';
+      }
+      if (isToday) cls += ' today';
+      if (pastDay && !cls.includes('period') && !cls.includes('fertile') && !cls.includes('ovulation')) cls += ' past';
+      gridHtml += `<div class="${cls}">${d}</div>`;
+    }
+    gridHtml += `</div>`;
+
+    // Event chips summary
+    let summaryHtml = '<div class="mini-month-summary">';
+    if (isRegular) {
+      if (periodSet.size)  summaryHtml += `<span class="mini-event-chip period">🩸 ${[...periodSet].sort((a,b)=>a-b).slice(0,1)}–${[...periodSet].sort((a,b)=>a-b).slice(-1)} (${periodSet.size}d)</span>`;
+      if (ovDay)           summaryHtml += `<span class="mini-event-chip ovulation">💜 Ov. ${ovDay}</span>`;
+      if (fertileSet.size) summaryHtml += `<span class="mini-event-chip fertile">🌿 Fertile</span>`;
+    } else {
+      if (approxPeriodSet.size)  summaryHtml += `<span class="mini-event-chip approx">🩸 ~Period</span>`;
+      if (approxFertileSet.size) summaryHtml += `<span class="mini-event-chip approx">🌿 ~Fertile</span>`;
+    }
+    summaryHtml += '</div>';
+
+    html += `
+      <div class="mini-month${isCurrent ? ' is-current' : ''}">
+        <div class="mini-month-title">
+          <span>${MONTH_NAMES[m]}</span>
+          ${badge}
+        </div>
+        ${gridHtml}
+        ${summaryHtml}
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+
+  // Auto-scroll to current month on initial build
+  if (yearViewYear === todayY) {
+    requestAnimationFrame(() => {
+      const current = container.querySelector('.is-current');
+      if (current) current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    });
+  }
+}
+
+function buildYearTimeline() {
+  const container = document.getElementById('year-timeline-rows');
+  const isRegular = profile.cycleType === 'regular';
+  let html = '';
+
+  for (let m = 0; m < 12; m++) {
+    const { periodSet, fertileSet, ovDay, approxPeriodSet, approxFertileSet, daysInMonth } = getMonthHighlights(yearViewYear, m);
+
+    const periodArr  = isRegular ? [...periodSet].sort((a,b)=>a-b)  : [...approxPeriodSet].sort((a,b)=>a-b);
+    const fertileArr = isRegular ? [...fertileSet].sort((a,b)=>a-b) : [...approxFertileSet].sort((a,b)=>a-b);
+
+    const pStart  = periodArr.length  ? periodArr[0]  : null;
+    const pEnd    = periodArr.length  ? periodArr[periodArr.length-1]   : null;
+    const fStart  = fertileArr.length ? fertileArr[0] : null;
+    const fEnd    = fertileArr.length ? fertileArr[fertileArr.length-1] : null;
+
+    const pLeft   = pStart ? ((pStart-1)/daysInMonth*100).toFixed(1) : 0;
+    const pWidth  = (pStart && pEnd) ? (((pEnd-pStart+1)/daysInMonth)*100).toFixed(1) : 0;
+    const fLeft   = fStart ? ((fStart-1)/daysInMonth*100).toFixed(1) : 0;
+    const fWidth  = (fStart && fEnd) ? (((fEnd-fStart+1)/daysInMonth)*100).toFixed(1) : 0;
+    const ovLeft  = ovDay ? (((ovDay-1)/daysInMonth)*100).toFixed(1) : null;
+
+    html += `
+      <div class="timeline-row">
+        <div class="timeline-month-label">${MONTH_SHORT[m]}</div>
+        <div class="timeline-bars">
+          <div class="timeline-bar-row">
+            <div class="timeline-bar-label">🩸 Period</div>
+            <div class="timeline-bar-track">
+              ${pWidth > 0 ? `<div class="timeline-bar-fill period" style="left:${pLeft}%;width:${pWidth}%"></div>` : ''}
+            </div>
+          </div>
+          <div class="timeline-bar-row">
+            <div class="timeline-bar-label">🌿 Fertile</div>
+            <div class="timeline-bar-track">
+              ${fWidth > 0 ? `<div class="timeline-bar-fill fertile" style="left:${fLeft}%;width:${fWidth}%"></div>` : ''}
+              ${ovLeft && isRegular ? `<div class="timeline-bar-fill ovulation" style="left:${ovLeft}%;width:${(1/daysInMonth*100).toFixed(1)}%"></div>` : ''}
+            </div>
+          </div>
+        </div>
+        <div style="font-size:9px;color:var(--text-light);padding-top:2px;flex-shrink:0;width:20px;text-align:right">${daysInMonth}</div>
+      </div>
+    `;
+  }
+  container.innerHTML = html;
+}
+
+// ===== MOCK / COMING SOON MODAL =====
+const CS_CONFIGS = {
+  booking: {
+    emoji: '🏥',
+    title: 'Booking Coming Soon!',
+    sub: 'Real appointments are almost here.',
+    steps: [
+      'Your interest in this clinic has been noted',
+      'We are finalising clinic onboarding & verification',
+      'Live booking goes live — you\'ll be first to know'
+    ]
+  },
+  shop: {
+    emoji: '🛍️',
+    title: 'Shopping Coming Soon!',
+    sub: 'Real purchases are almost ready.',
+    steps: [
+      'Browse products and build your perfect package',
+      'We onboard verified Kenyan vendors & confirm stock',
+      'Real checkout launches — you get notified first'
+    ]
+  }
+};
+
+function openCSModal(type, context) {
+  const cfg = CS_CONFIGS[type] || CS_CONFIGS.booking;
+  document.getElementById('cs-emoji').textContent = cfg.emoji;
+  document.getElementById('cs-title').textContent = cfg.title;
+  document.getElementById('cs-sub').textContent   = cfg.sub;
+
+  const contextLine = context ? `<strong>${context}</strong> has been noted as a preferred ${type === 'booking' ? 'clinic' : 'product'}.<br><br>` : '';
+  document.getElementById('cs-message').innerHTML =
+    `${contextLine}This feature is currently in development. We are actively onboarding clinics and vendors across Kenya to enable real ${type === 'booking' ? 'bookings' : 'purchases'}. Everything you see is a working prototype — the live experience launches very soon!`;
+
+  document.getElementById('cs-steps').innerHTML = cfg.steps.map((s,i) =>
+    `<div class="cs-step"><div class="cs-step-dot">${i+1}</div><span>${s}</span></div>`
+  ).join('');
+
+  document.getElementById('cs-modal').classList.add('open');
+}
+
+function closeCSModal() {
+  document.getElementById('cs-modal').classList.remove('open');
+  document.getElementById('cs-phone').value = '';
+}
+
+function submitNotifyMe() {
+  const phone = document.getElementById('cs-phone').value.trim();
+  document.getElementById('cs-phone').value = '';
+  closeCSModal();
+  showToast(phone ? `We'll notify you at ${phone} 🎉` : 'You\'re on the list! We\'ll notify you 🎉', 'success');
+}
+
+// Close CS modal on overlay click
+document.getElementById('cs-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeCSModal();
+});
+
+// ===== AUTH TAB SWITCHER =====
+function switchAuthTab(tab) {
+  const signup = document.getElementById('ob-signup-section');
+  const login  = document.getElementById('ob-login-section');
+  const tabSignup = document.getElementById('tab-signup');
+  const tabLogin  = document.getElementById('tab-login');
+  if (tab === 'signup') {
+    signup.style.display = 'block';
+    login.style.display  = 'none';
+    tabSignup.style.background = 'var(--pink)';
+    tabSignup.style.color = 'white';
+    tabSignup.style.borderColor = 'var(--pink)';
+    tabLogin.style.background = 'white';
+    tabLogin.style.color = 'var(--pink-dark)';
+    tabLogin.style.borderColor = 'var(--pink-light)';
+  } else {
+    login.style.display  = 'block';
+    signup.style.display = 'none';
+    tabLogin.style.background = 'var(--pink)';
+    tabLogin.style.color = 'white';
+    tabLogin.style.borderColor = 'var(--pink)';
+    tabSignup.style.background = 'white';
+    tabSignup.style.color = 'var(--pink-dark)';
+    tabSignup.style.borderColor = 'var(--pink-light)';
+    document.getElementById('err-login-email').classList.remove('show');
+  }
+}
+
+// ===== SIGN IN (returning users) =====
+async function signInUser() {
+  const email = (document.getElementById('login-email').value || '').trim();
+  let valid = true;
+
+  document.getElementById('err-login-email').classList.remove('show');
+
+  if (!email || !email.includes('@')) {
+    document.getElementById('err-login-email').classList.add('show');
+    valid = false;
+  }
+  if (!valid) return;
+
+  // Supabase magic link sign-in
+  if (_supabase) {
+    const { error } = await _supabase.auth.signInWithOtp({
+      email: email,
+      options: { emailRedirectTo: window.location.href }
+    })
+    if (error) {
+      showToast('Could not send link: ' + error.message, 'warning');
+      return;
+    }
+    showToast('Check your email for a login link 💌', 'success');
+    return;
+  }
+
+  // Fallback: check localStorage for email match (offline demo)
+  const saved = loadState();
+  if (saved && saved.profile && saved.profile.email === email) {
+    profile = saved.profile;
+    cart    = saved.cart || [];
+    todaySymptoms = saved.todaySymptoms || [];
+    launchApp();
+    if (saved.logEntries && saved.logEntries.length > 0) {
+      const container = document.getElementById('log-entries');
+      container.innerHTML = saved.logEntries.map(e => e.html).join('');
+      updateRecordStats();
+    }
+  } else {
+    showToast('Account not found. Check your email or sign up. 💕', 'warning');
+  }
+}
+
+// ===== VALIDATE ONBOARDING (updated with email/password) =====
+// (extends original validateOnboarding below; email/password added inline)
+
+// ===== SHARE MODAL =====
+let shareToken = null;
+
+function generateShareToken() {
+  // Generate a unique token based on profile + timestamp
+  const raw = (profile?.name || 'user') + Date.now() + Math.random().toString(36).slice(2);
+  // Simple base64-like encoding
+  return btoa(encodeURIComponent(raw)).replace(/[+/=]/g, '').slice(0, 20);
+}
+
+function getShareLink() {
+  if (!shareToken) {
+    // Try to load from localStorage first
+    const saved = loadState();
+    shareToken = saved?.shareToken || generateShareToken();
+    // Persist the token
+    const data = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+    data.shareToken = shareToken;
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
+  }
+  const base = window.location.href.split('?')[0];
+  return `${base}?share=${shareToken}&name=${encodeURIComponent(profile?.name || 'your friend')}`;
+}
+
+function openShareModal() {
+  const modal = document.getElementById('share-modal');
+  modal.classList.add('open');
+  // Populate share link
+  const link = getShareLink();
+  document.getElementById('share-link-input').value = link;
+  // Load existing shares from localStorage
+  loadActiveShares();
+}
+
+function closeShareModal() {
+  document.getElementById('share-modal').classList.remove('open');
+}
+
+function copyShareLink() {
+  const input = document.getElementById('share-link-input');
+  navigator.clipboard.writeText(input.value).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied! ✅';
+    setTimeout(() => { btn.textContent = 'Copy 📋'; }, 2000);
+    showToast('Link copied! Share it with your friend 🔗', 'success');
+  }).catch(() => {
+    input.select();
+    document.execCommand('copy');
+    showToast('Link copied! 🔗', 'success');
+  });
+}
+
+function shareViaWhatsApp() {
+  const link = getShareLink();
+  const msg  = encodeURIComponent(`Hey! ${profile?.name || 'I'} is sharing their Hisia cycle tracker with you 💕 View it here: ${link}`);
+  window.open(`https://wa.me/?text=${msg}`, '_blank');
+}
+
+function shareViaNative() {
+  const link = getShareLink();
+  if (navigator.share) {
+    navigator.share({
+      title: 'Hisia Cycle Tracker',
+      text:  `${profile?.name || 'Your friend'} is sharing their Hisia cycle tracker with you 💕`,
+      url:   link,
+    }).catch(() => {});
+  } else {
+    copyShareLink();
+  }
+}
+
+function sendInviteEmail() {
+  const emailInput = document.getElementById('invite-email-input');
+  const email = (emailInput.value || '').trim();
+  if (!email || !email.includes('@')) {
+    showToast('Please enter a valid email address', 'warning');
+    return;
+  }
+
+  // Save to localStorage shares list
+  const shares = getSharesList();
+  if (!shares.find(s => s.email === email)) {
+    shares.push({ email, sharedAt: new Date().toISOString() });
+    localStorage.setItem('hisia_shares', JSON.stringify(shares));
+  }
+
+  // In a real Supabase setup, save to share_invites table:
+  // await supabase.from('share_invites').insert({ owner_id: userId, invitee_email: email, share_token: shareToken })
+
+  // Open mailto as the invite mechanism (works without a backend)
+  const link = getShareLink();
+  const subject = encodeURIComponent('Your Hisia Cycle Tracker invite 💕');
+  const body = encodeURIComponent(
+    `Hey!\n\n${profile?.name || 'Your friend'} is sharing their Hisia period tracker with you.\n\n` +
+    `Click the link below to view their tracker:\n${link}\n\n` +
+    `Hisia helps women track their cycle and understand their body 🌸\n\nWith love,\nThe Hisia Team`
+  );
+  window.open(`mailto:${email}?subject=${subject}&body=${body}`, '_blank');
+
+  emailInput.value = '';
+  showToast(`Invite opened for ${email} 💌`, 'success');
+  loadActiveShares();
+}
+
+function getSharesList() {
+  try { return JSON.parse(localStorage.getItem('hisia_shares') || '[]'); } catch(e) { return []; }
+}
+
+function loadActiveShares() {
+  const shares = getSharesList();
+  const section = document.getElementById('active-shares-section');
+  const list    = document.getElementById('active-shares-list');
+  if (shares.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  list.innerHTML = shares.map((s, i) => `
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:10px;padding:10px 12px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;">${s.email}</div>
+        <div style="font-size:10px;color:var(--text-light);">Shared ${new Date(s.sharedAt).toLocaleDateString()}</div>
+      </div>
+      <button onclick="removeShare(${i})" style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--text-light);" title="Remove">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeShare(index) {
+  const shares = getSharesList();
+  shares.splice(index, 1);
+  localStorage.setItem('hisia_shares', JSON.stringify(shares));
+  loadActiveShares();
+  showToast('Share removed', 'success');
+}
+
+// Handle incoming share view (when a shared link is opened)
+function checkIfSharedView() {
+  const params = new URLSearchParams(window.location.search);
+  const token  = params.get('share');
+  const name   = params.get('name');
+  if (token) {
+    // Show a banner indicating this is a shared read-only view
+    const banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:linear-gradient(135deg,var(--pink),var(--lavender));color:white;text-align:center;padding:10px 16px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 2px 12px rgba(0,0,0,0.15);';
+    banner.innerHTML = `👁️ You're viewing ${name ? decodeURIComponent(name) + "'s" : 'a shared'} Hisia tracker — read only`;
+    document.body.prepend(banner);
+    // Disable all action buttons in shared view
+    document.querySelectorAll('.btn-primary, .chip').forEach(el => {
+      el.style.pointerEvents = 'none';
+      el.style.opacity = '0.5';
+    });
+  }
+}
+
+// Share modal close on overlay click
+document.getElementById('share-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeShareModal();
+});
+
+// ===== INIT =====
+function init() {
+  // Check if this is a shared read-only view first
+  checkIfSharedView();
+
+  const saved = loadState();
+
+  if (saved && saved.profile && saved.profile.name) {
+    profile = saved.profile;
+    cart    = saved.cart || [];
+    todaySymptoms = saved.todaySymptoms || [];
+    // Restore shareToken if it exists
+    if (saved.shareToken) shareToken = saved.shareToken;
+
+    // Skip onboarding
+    document.getElementById('onboarding').style.display = 'none';
+    launchApp();
+
+    // Restore log entries
+    if (saved.logEntries && saved.logEntries.length > 0) {
+      const container = document.getElementById('log-entries');
+      container.innerHTML = saved.logEntries.map(e => e.html).join('');
+      updateRecordStats();
+    }
+  } else {
+    // Set today as default for last period (helpful UX)
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('ob-last-period').value = today;
+  }
+}
+
+// Close modal on overlay click
+document.getElementById('delivery-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Boot
+init();
+
+// Handle magic link redirect + auth state
+if (_supabase) {
+  _supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      // Check for pending profile from signup
+      const pending = localStorage.getItem('hisia_pending_profile');
+      if (pending) {
+        const profileData = JSON.parse(pending);
+        const { error } = await _supabase.from('profiles').upsert({
+          id: session.user.id,
+          email: session.user.email,
+          name: profileData.name,
+          age: profileData.age,
+          county: profileData.county,
+          cycle_type: profileData.cycleType,
+          cycle_length: profileData.cycleLength,
+          period_length: profileData.periodLength,
+          last_period_date: profileData.lastPeriodDate,
+        });
+        if (!error) {
+          localStorage.removeItem('hisia_pending_profile');
+          profile = profileData;
+          launchApp();
+        }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
