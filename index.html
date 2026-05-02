@@ -2969,8 +2969,8 @@ async function sendAiMessage() {
       }
     }
 
-    const response = await fetch(
-  https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyAuNC4w_klziiM0TNeAAVAUG5Cbszbvr1c,
+  const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyAuNC4w_klziiM0TNeAAVAUG5Cbszbvr1c`, 
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -2983,19 +2983,7 @@ async function sendAiMessage() {
     })
   }
 );
-const json = await response.json();
-const data = { content: [{ type: 'text', text: json.candidates?.[0]?.content?.parts?.[0]?.text || 'Samahani 💕' }] };, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: systemWithContext,
-        messages: aiMessages.slice(-12) // keep last 12 turns for context
-      })
-    });
-
-    const data = await response.json();
+const data = { content: [{ type: 'text', text: json.candidates?.[0]?.content?.parts?.[0]?.text || 'Samahani 💕' }] };
     removeTypingIndicator();
 
     if (data.content && data.content[0]?.text) {
